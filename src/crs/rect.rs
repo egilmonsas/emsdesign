@@ -8,6 +8,10 @@ impl CrsRect {
         Self { y, z }
     }
 
+    pub fn default() -> Self {
+        Self { y: 100.0, z: 100.0 }
+    }
+
     pub fn area(&self) -> f64 {
         self.y * self.z
     }
