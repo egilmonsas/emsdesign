@@ -1,6 +1,6 @@
-use emsdesign::crs::rect::CrsRect;
+use emsdesign::mmb::columnbeam::ColumnBeam;
 
 #[allow(unused_variables)]
 fn main() {
-    let crs = CrsRect::new(2.0, 2.0);
+    let cmb = ColumnBeam::default();
 }
