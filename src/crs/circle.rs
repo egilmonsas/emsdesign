@@ -26,10 +26,10 @@ impl CrossSection for CrsCircle {
     }
 
     fn I(&self) -> (f64, f64) {
-        (PI / 4.0 * self.r.powi(4), PI / 2.0 * self.r.powi(4))
+        (PI / 4.0 * self.r.powi(4), PI / 4.0 * self.r.powi(4))
     }
 
     fn w(&self) -> (f64, f64) {
-        (PI / 4.0 * self.r.powi(3), PI / 2.0 * self.r.powi(3))
+        (PI / 4.0 * self.r.powi(3), PI / 4.0 * self.r.powi(3))
     }
 }
