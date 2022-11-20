@@ -1,5 +1,8 @@
+pub mod r#box;
 pub mod circle;
 pub mod rect;
+pub mod tube;
+
 pub trait CrossSection {
     fn area(&self) -> f64;
     fn centroid(&self) -> (f64, f64);
