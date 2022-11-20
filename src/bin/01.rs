@@ -5,7 +5,11 @@ use emsdesign::mat::steel::Steel;
 use emsdesign::mmb::columnbeam::ColumnBeam;
 
 fn main() {
-    let cmb = ColumnBeam::new(CrsRect::new(100.0, 200.0), Steel::default(), 5_000.0);
+    let cmb = ColumnBeam::new(
+        Box::new(CrsRect::new(100.0, 200.0)),
+        Steel::default(),
+        5_000.0,
+    );
 
     let load = LoadCase::new().axial_kN(500.0);
 

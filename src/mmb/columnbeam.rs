@@ -4,7 +4,7 @@ use crate::erc::NSEN_1993::*;
 use crate::mat::steel::Steel;
 
 pub struct ColumnBeam {
-    pub crs: CrsRect,
+    pub crs: Box<dyn CrossSection>,
     pub mat: Steel,
     pub len: f64,
 }
@@ -12,14 +12,14 @@ pub struct ColumnBeam {
 impl Default for ColumnBeam {
     fn default() -> Self {
         Self {
-            crs: CrsRect::default(),
+            crs: Box::new(CrsRect::default()),
             mat: Steel::default(),
             len: 1.0,
         }
     }
 }
 impl ColumnBeam {
-    pub fn new(crs: CrsRect, mat: Steel, len: f64) -> Self {
+    pub fn new(crs: Box<dyn CrossSection>, mat: Steel, len: f64) -> Self {
         Self { crs, mat, len }
     }
 
@@ -65,63 +65,41 @@ impl ColumnBeam {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::zeq::Zeq;
+    use crate::{crs::circle::CrsCircle, zeq::Zeq};
 
     #[test]
     fn axial_cap() {
-        let crs = CrsRect::new(100.0, 100.0);
-        let mat = Steel::default();
+        let mmb = ColumnBeam::default();
+        assert_zeq!(mmb.axial_cap(), 3_550_000.0)
+    }
+    #[test]
+    fn axial_cap_circle() {
         let mmb = ColumnBeam {
-            crs,
-            mat,
+            crs: Box::new(CrsCircle::default()),
             ..Default::default()
         };
-        assert_zeq!(mmb.axial_cap(), 3_550_000.0)
+        assert_zeq!(mmb.axial_cap(), 2_788_163.480060)
     }
 
     #[test]
     fn moment_cap() {
-        let crs = CrsRect::new(100.0, 100.0);
-        let mat = Steel::default();
-        let mmb = ColumnBeam {
-            crs,
-            mat,
-            ..Default::default()
-        };
+        let mmb = ColumnBeam::default();
         assert_zeq!(mmb.moment_cap().0, 59_166_666.66666)
     }
 
     #[test]
     fn ea() {
-        let crs = CrsRect::new(100.0, 100.0);
-        let mat = Steel::default();
-        let mmb = ColumnBeam {
-            crs,
-            mat,
-            ..Default::default()
-        };
+        let mmb = ColumnBeam::default();
         assert_zeq!(mmb.EA(), 2_100_000_000.0)
     }
     #[test]
     fn ei() {
-        let crs = CrsRect::new(100.0, 100.0);
-        let mat = Steel::default();
-        let mmb = ColumnBeam {
-            crs,
-            mat,
-            ..Default::default()
-        };
+        let mmb = ColumnBeam::default();
         assert_zeq!(mmb.EI().0, 1_750_000_000_000.0)
     }
     #[test]
     fn euler_load() {
-        let crs = CrsRect::new(100.0, 100.0);
-        let mat = Steel::default();
-        let mmb = ColumnBeam {
-            crs,
-            mat,
-            len: 10000.0,
-        };
+        let mmb = ColumnBeam::default();
         let lky = 10000.0;
         let lkz = 10000.0;
         assert_zeq!(mmb.euler_load((lky, lkz)).0, 172_718.077019)

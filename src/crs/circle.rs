@@ -12,7 +12,7 @@ impl CrsCircle {
     }
 
     pub fn default() -> Self {
-        Self { r: 100.0 }
+        Self { r: 50.0 }
     }
 }
 
