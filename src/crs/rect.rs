@@ -1,3 +1,5 @@
+use super::CrossSection;
+
 pub struct CrsRect {
     y: f64,
     z: f64,
@@ -11,22 +13,23 @@ impl CrsRect {
     pub fn default() -> Self {
         Self { y: 100.0, z: 100.0 }
     }
-
-    pub fn area(&self) -> f64 {
+}
+impl CrossSection for CrsRect {
+    fn area(&self) -> f64 {
         self.y * self.z
     }
 
-    pub fn centroid(&self) -> (f64, f64) {
+    fn centroid(&self) -> (f64, f64) {
         (self.y / 2.0, self.z / 2.0)
     }
     #[allow(non_snake_case)]
-    pub fn I(&self) -> (f64, f64) {
+    fn I(&self) -> (f64, f64) {
         (
             self.y * self.z.powi(3) / 12.0,
             self.z * self.y.powi(3) / 12.0,
         )
     }
-    pub fn w(&self) -> (f64, f64) {
+    fn w(&self) -> (f64, f64) {
         let inertia = self.I();
         (inertia.0 / (self.z / 2.0), inertia.1 / (self.y / 2.0))
     }

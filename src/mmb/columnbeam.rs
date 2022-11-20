@@ -1,4 +1,5 @@
 use crate::crs::rect::CrsRect;
+use crate::crs::CrossSection;
 use crate::erc::NSEN_1993::*;
 use crate::mat::steel::Steel;
 
