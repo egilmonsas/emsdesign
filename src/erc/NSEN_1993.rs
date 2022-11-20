@@ -43,13 +43,6 @@ mod tests {
 
     #[test]
     fn test_f_6_2() {
-        let n_ed = 100.0;
-        let my_ed = 100.0;
-        let mz_ed = 100.0;
-        let n_rd = 300.0;
-        let my_rd = 300.0;
-        let mz_rd = 300.0;
-
         let util = f_6_2(100.0, 100.0, 100.0, 300.0, 300.0, 300.0);
         assert_zeq!(util, 1.0);
     }

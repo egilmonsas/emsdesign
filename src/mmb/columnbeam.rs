@@ -1,4 +1,5 @@
 use crate::crs::rect::CrsRect;
+use crate::erc::NSEN_1993::*;
 use crate::mat::steel::Steel;
 
 pub struct ColumnBeam {
@@ -25,6 +26,19 @@ impl ColumnBeam {
         self.mat.fy * self.crs.area()
     }
 
+    pub fn buckle_cap(&self, lky: f64, lkz: f64) -> f64 {
+        {
+            // Eurocode 1993 buckling
+            let gamma_1 = 1.15;
+            let alpha = _get_alpha(BuckleCurve::C);
+            let eulerloads = self.euler_load((lky, lkz));
+            let ncr = eulerloads.0.min(eulerloads.1);
+            let lambda = _compute_lamba(self.crs.area(), self.mat.fy, ncr);
+            let phi = _compute_phi(alpha, lambda);
+            let khi = f_6_49(phi, lambda);
+            f_6_47(khi, self.crs.area(), self.mat.fy, gamma_1)
+        }
+    }
     pub fn moment_cap(&self) -> (f64, f64) {
         let w = self.crs.w();
         (w.0 * self.mat.fy, w.1 * self.mat.fy)
