@@ -12,18 +12,7 @@ fn main() {
     let utilization: f64 = {
         let (n_ed, _, my_ed, mz_ed) = load.get_all();
 
-        let n_rd = {
-            let gamma_1 = 1.15;
-            let alpha = _get_alpha(BuckleCurve::C);
-
-            let eulerloads = cmb.euler_load((5000.0, 1000.0));
-            let ncr = eulerloads.0.min(eulerloads.1);
-            let lambda = _compute_lamba(cmb.crs.area(), cmb.mat.fy, ncr);
-            let phi = _compute_phi(alpha, lambda);
-            let khi = f_6_49(phi, lambda);
-
-            f_6_47(khi, cmb.crs.area(), cmb.mat.fy, gamma_1)
-        };
+        let n_rd = cmb.buckle_cap(5000.0, 1000.0);
 
         let (my_rd, mz_rd) = cmb.moment_cap();
 
