@@ -1,6 +1,7 @@
 pub mod r#box;
 pub mod circle;
 pub mod rect;
+pub mod standard;
 pub mod tube;
 
 pub trait CrossSection {
