@@ -23,15 +23,20 @@ impl CrossSection for CrsRect {
         (self.y / 2.0, self.z / 2.0)
     }
     #[allow(non_snake_case)]
-    fn I(&self) -> (f64, f64) {
-        (
-            self.y * self.z.powi(3) / 12.0,
-            self.z * self.y.powi(3) / 12.0,
-        )
+    fn Iy(&self) -> f64 {
+        self.y * self.z.powi(3) / 12.0
     }
-    fn w(&self) -> (f64, f64) {
-        let inertia = self.I();
-        (inertia.0 / (self.z / 2.0), inertia.1 / (self.y / 2.0))
+
+    #[allow(non_snake_case)]
+    fn Iz(&self) -> f64 {
+        self.z * self.y.powi(3) / 12.0
+    }
+
+    fn wy(&self) -> f64 {
+        self.Iy() / (self.z / 2.0)
+    }
+    fn wz(&self) -> f64 {
+        self.Iz() / (self.y / 2.0)
     }
 }
 
@@ -79,9 +84,8 @@ mod tests {
         let height = 300.0;
         let crs = CrsRect::new(width, height);
 
-        let inertia = crs.I();
-        assert_zeq!(inertia.0, 225_000_000.0);
-        assert_zeq!(inertia.1, 25_000_000.0);
+        assert_zeq!(crs.Iy(), 225_000_000.0);
+        assert_zeq!(crs.Iz(), 25_000_000.0);
     }
 
     #[test]
@@ -90,8 +94,7 @@ mod tests {
         let height = 300.0;
         let crs = CrsRect::new(width, height);
 
-        let inertia = crs.w();
-        assert_zeq!(inertia.0, 1_500_000.0);
-        assert_zeq!(inertia.1, 500_000.0);
+        assert_zeq!(crs.wy(), 1_500_000.0);
+        assert_zeq!(crs.wz(), 500_000.0);
     }
 }

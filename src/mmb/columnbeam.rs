@@ -31,34 +31,40 @@ impl ColumnBeam {
         {
             // Eurocode 1993 buckling
             let gamma_1 = 1.15;
-            let alpha = _get_alpha(BuckleCurve::C);
-            let eulerloads = self.euler_load((lky, lkz));
-            let ncr = eulerloads.0.min(eulerloads.1);
+            let ncr = self.euler_load((lky, lkz));
             let lambda = _compute_lamba(self.crs.area(), self.mat.fy, ncr);
-            let phi = _compute_phi(alpha, lambda);
+            let phi = _compute_phi(BuckleCurve::C.alpha(), lambda);
             let khi = f_6_49(phi, lambda);
             f_6_47(khi, self.crs.area(), self.mat.fy, gamma_1)
         }
     }
-    pub fn moment_cap(&self) -> (f64, f64) {
-        let w = self.crs.w();
-        (w.0 * self.mat.fy, w.1 * self.mat.fy)
+    #[allow(non_snake_case)]
+    pub fn Mpl_y(&self) -> f64 {
+        self.crs.wy()*self.mat.fy
+    }
+    #[allow(non_snake_case)]
+    pub fn Mpl_z(&self) -> f64 {
+        self.crs.wz()*self.mat.fy
     }
     #[allow(non_snake_case)]
     pub fn EA(&self) -> f64 {
         self.mat.E * self.crs.area()
     }
     #[allow(non_snake_case)]
-    pub fn EI(&self) -> (f64, f64) {
-        let I = self.crs.I();
-        (I.0 * self.mat.E, I.1 * self.mat.E)
+    pub fn EIy(&self) -> f64 {
+        let I = self.crs.Iy();
+        I * self.mat.E
     }
-    pub fn euler_load(&self, lks: (f64, f64)) -> (f64, f64) {
-        let ei = self.EI();
-        (
-            ei.0 * (std::f64::consts::PI / lks.0).powi(2),
-            ei.1 * (std::f64::consts::PI / lks.1).powi(2),
+    #[allow(non_snake_case)]
+    pub fn EIz(&self) -> f64 {
+        let I = self.crs.Iy();
+        I * self.mat.E
+    }  
+    pub fn euler_load(&self, lks: (f64, f64)) -> f64 {
+        self.EIy() * (std::f64::consts::PI / lks.0).powi(2).min(
+            self.EIz() * (std::f64::consts::PI / lks.1).powi(2),
         )
+        
     }
 }
 
@@ -84,7 +90,7 @@ mod tests {
     #[test]
     fn moment_cap() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.moment_cap().0, 59_166_666.66666)
+        assert_zeq!(mmb.Mpl_y(), 59_166_666.66666)
     }
 
     #[test]
@@ -95,13 +101,13 @@ mod tests {
     #[test]
     fn ei() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.EI().0, 1_750_000_000_000.0)
+        assert_zeq!(mmb.EIy(), 1_750_000_000_000.0)
     }
     #[test]
     fn euler_load() {
         let mmb = ColumnBeam::default();
         let lky = 10000.0;
         let lkz = 10000.0;
-        assert_zeq!(mmb.euler_load((lky, lkz)).0, 172_718.077019)
+        assert_zeq!(mmb.euler_load((lky, lkz)), 172_718.077019)
     }
 }

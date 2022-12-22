@@ -28,12 +28,18 @@ impl CrossSection for CrsCircle {
         (self.r(), self.r())
     }
 
-    fn I(&self) -> (f64, f64) {
-        (PI / 4.0 * self.r().powi(4), PI / 4.0 * self.r().powi(4))
+    fn Iy(&self) -> f64 {
+        PI / 4.0 * self.r().powi(4)
+    }
+    fn Iz(&self) -> f64 {
+        PI / 4.0 * self.r().powi(4)
     }
 
-    fn w(&self) -> (f64, f64) {
-        (PI / 4.0 * self.r().powi(3), PI / 4.0 * self.r().powi(3))
+    fn wy(&self) -> f64 {
+        PI / 4.0 * self.r().powi(3)
+    }
+    fn wz(&self) -> f64 {
+        PI / 4.0 * self.r().powi(3)
     }
 }
 
@@ -76,9 +82,8 @@ mod tests {
         let diameter = 100.0;
         let crs = CrsCircle::new(diameter);
 
-        let inertia = crs.I();
-        assert_zeq!(inertia.0, PI / 4.0 * 50.0f64.powi(4));
-        assert_zeq!(inertia.1, PI / 4.0 * 50.0f64.powi(4));
+        assert_zeq!(crs.Iy(), PI / 4.0 * 50.0f64.powi(4));
+        assert_zeq!(crs.Iz(), PI / 4.0 * 50.0f64.powi(4));
     }
 
     #[test]
@@ -86,8 +91,7 @@ mod tests {
         let diameter = 100.0;
         let crs = CrsCircle::new(diameter);
 
-        let inertia = crs.w();
-        assert_zeq!(inertia.0, PI / 4.0 * 50.0f64.powi(3));
-        assert_zeq!(inertia.1, PI / 4.0 * 50.0f64.powi(3));
+        assert_zeq!(crs.wy(), PI / 4.0 * 50.0f64.powi(3));
+        assert_zeq!(crs.wy(), PI / 4.0 * 50.0f64.powi(3));
     }
 }

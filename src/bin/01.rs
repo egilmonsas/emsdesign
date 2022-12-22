@@ -18,9 +18,7 @@ fn main() {
 
         let n_rd = cmb.buckle_cap(5000.0, 1000.0);
 
-        let (my_rd, mz_rd) = cmb.moment_cap();
-
-        f_6_2(n_ed, my_ed, mz_ed, n_rd, my_rd, mz_rd)
+        f_6_2(n_ed, my_ed, mz_ed, n_rd, cmb.Mpl_y(), cmb.Mpl_z())
     };
 
     println!("{}", load);

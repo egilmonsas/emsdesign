@@ -8,6 +8,8 @@ pub trait CrossSection {
     fn area(&self) -> f64;
     fn centroid(&self) -> (f64, f64);
     #[allow(non_snake_case)]
-    fn I(&self) -> (f64, f64);
-    fn w(&self) -> (f64, f64);
+    fn Iy(&self) -> f64;
+    fn Iz(&self) -> f64;
+    fn wy(&self) -> f64;
+    fn wz(&self) -> f64;
 }

@@ -35,15 +35,22 @@ impl CrossSection for CrsBox {
         (self.y / 2.0, self.z / 2.0)
     }
     #[allow(non_snake_case)]
-    fn I(&self) -> (f64, f64) {
-        (
-            (self.y * self.z.powi(3) - self.y_inner() * self.z_inner().powi(3)) / 12.0,
-            (self.z * self.y.powi(3) - self.z_inner() * self.y_inner().powi(3)) / 12.0,
-        )
+    fn Iy(&self) -> f64 {
+        
+            (self.y * self.z.powi(3) - self.y_inner() * self.z_inner().powi(3)) / 12.0
+        
     }
-    fn w(&self) -> (f64, f64) {
-        let inertia = self.I();
-        (inertia.0 / (self.z / 2.0), inertia.1 / (self.y / 2.0))
+    #[allow(non_snake_case)]
+    fn Iz(&self) -> f64 {
+        
+            (self.z * self.y.powi(3) - self.z_inner() * self.y_inner().powi(3)) / 12.0
+        
+    }
+    fn wy(&self) -> f64 {
+        self.Iy() / (self.z / 2.0)
+    }
+    fn wz(&self) -> f64 {
+        self.Iz() / (self.y / 2.0)
     }
 }
 
@@ -96,9 +103,8 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsBox::new(width, height, thickness);
 
-        let inertia = crs.I();
-        assert_zeq!(inertia.0, 2_886_666.666666);
-        assert_zeq!(inertia.1, 861_666.666666);
+        assert_zeq!(crs.Iy(), 2_886_666.666666);
+        assert_zeq!(crs.Iz(), 861_666.666666);
     }
 
     #[test]
@@ -108,8 +114,7 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsBox::new(width, height, thickness);
 
-        let inertia = crs.w();
-        assert_zeq!(inertia.0, 2_886_666.666666 / 50.0);
-        assert_zeq!(inertia.1, 861_666.666666 / 25.0);
+        assert_zeq!(crs.wy(), 2_886_666.666666 / 50.0);
+        assert_zeq!(crs.wz(), 861_666.666666 / 25.0);
     }
 }

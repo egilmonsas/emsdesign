@@ -33,16 +33,18 @@ impl CrossSection for CrsTube {
         (self.r(), self.r())
     }
 
-    fn I(&self) -> (f64, f64) {
-        (
-            PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4)),
-            PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4)),
-        )
+    fn Iy(&self) -> f64 {
+        PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4)) 
+    }
+    fn Iz(&self) -> f64 {
+        PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4))
+    }
+    fn wy(&self) -> f64 {
+        self.Iy() / self.r()
     }
 
-    fn w(&self) -> (f64, f64) {
-        let i = self.I();
-        (i.0 / self.r(), i.1 / self.r())
+    fn wz(&self) -> f64 {
+        self.Iz() / self.r()
     }
 }
 
@@ -90,9 +92,8 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsTube::new(diameter, thickness);
 
-        let inertia = crs.I();
-        assert_zeq!(inertia.0, 2_898_119.222936);
-        assert_zeq!(inertia.1, 2_898_119.222936);
+        assert_zeq!(crs.Iy(), 2_898_119.222936);
+        assert_zeq!(crs.Iz(), 2_898_119.222936);
     }
 
     #[test]
@@ -101,8 +102,7 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsTube::new(diameter, thickness);
 
-        let inertia = crs.w();
-        assert_zeq!(inertia.0, 57_962.384458);
-        assert_zeq!(inertia.1, 57_962.384458);
+        assert_zeq!(crs.wz(), 57_962.384458);
+        assert_zeq!(crs.wy(), 57_962.384458);
     }
 }
