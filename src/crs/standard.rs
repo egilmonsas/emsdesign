@@ -1,9 +1,6 @@
 use super::CrossSection;
-use polars::prelude::read_impl::OwnedBatchedCsvReader;
-use serde::{Deserialize, Serialize};
 
 use polars::prelude::*;
-use polars::io::mmap::MmapBytesReader;
 
 
 #[allow(dead_code)]
@@ -104,7 +101,7 @@ mod tests {
     fn it_works(){
         let df = CrsLib::new(&PRESETS::CHS.path());
         let crs = PresetCrs::new("Celsius 355 CHS 323.9x8", &df);
-        crs.area();
+        assert_zeq!(79.40,crs.area());
     }
 
 }
