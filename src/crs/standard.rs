@@ -82,6 +82,18 @@ impl CrsLib {
             Err(_) => panic!("Couldnt compile/read file"),
         };
     }
+    pub fn sections(&self) -> Vec<String> {
+        let df = self.df.clone().collect().unwrap();
+        let series: Vec<String> = df
+            .column("Section")
+            .unwrap()
+            .utf8()
+            .unwrap()
+            .into_no_null_iter()
+            .map(|s| String::from(s))
+            .collect();
+        series
+    }
 }
 
 pub struct PresetCrs {
@@ -155,5 +167,11 @@ mod tests {
         let df = CrsLib::new(&PRESETS::CHS);
         let crs = PresetCrs::new("Celsius 355 CHS 323.9x8", &df);
         assert_zeq!(7940.0, crs.area());
+    }
+
+    #[test]
+    fn can_collect_vector_from_section_names() {
+        let df = CrsLib::new(&PRESETS::CHS);
+        dbg!(df.sections());
     }
 }
