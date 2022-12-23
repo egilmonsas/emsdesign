@@ -4,11 +4,13 @@ pub mod rect;
 pub mod standard;
 pub mod tube;
 
+use serde_json::{json, Value};
+
 pub trait CrossSection {
-    /// Area in 
+    /// Area in
     /// [mm^2]
     fn area(&self) -> f64;
-    /// Yc, Zc, as measured from bottom left corner in 
+    /// Yc, Zc, as measured from bottom left corner in
     /// [mm]
     fn centroid(&self) -> (f64, f64);
     #[allow(non_snake_case)]
@@ -21,4 +23,15 @@ pub trait CrossSection {
     fn wy(&self) -> f64;
     /// Bending moment in [mm^3] about z-axis (usually defined as weak axis)
     fn wz(&self) -> f64;
+
+    fn json(&self) -> Value {
+        let jsonout = json!({
+            "area":  self.area(),
+            "Iy": self.Iy(),
+            "Iz": self.Iz(),
+            "wy": self.wy(),
+            "wz": self.wz(),
+        });
+        jsonout
+    }
 }

@@ -91,7 +91,7 @@ impl PresetCrs {
 impl CrossSection for PresetCrs {
     fn area(&self) -> f64 {
         // HELLA TRASH FUNCTION, PLEASE FIX
-        self.data.column("A[cm2]").unwrap().sum::<f64>().unwrap()
+        self.data.column("A[cm2]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(2)
     }
 
     fn centroid(&self) -> (f64, f64) {
@@ -124,6 +124,6 @@ mod tests {
     fn it_works() {
         let df = CrsLib::new(&PRESETS::CHS);
         let crs = PresetCrs::new("Celsius 355 CHS 323.9x8", &df);
-        assert_zeq!(79.40, crs.area());
+        assert_zeq!(7940.0, crs.area());
     }
 }
