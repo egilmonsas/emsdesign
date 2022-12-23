@@ -1,7 +1,10 @@
 use super::CrossSection;
-use std::path::Path;
+use std::io::prelude::*;
 
 use polars::prelude::*;
+
+const HEB: &'static [u8] = include_bytes!("./data/HEB.csv");
+const CHS: &'static [u8] = include_bytes!("./data/CHS.csv");
 
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
@@ -11,8 +14,14 @@ pub enum PRESETS {
 }
 
 impl PRESETS {
+    pub fn embeded_bytes(&self) -> &'static [u8] {
+        return match self {
+            PRESETS::HEB => HEB,
+            PRESETS::CHS => CHS,
+        };
+    }
     pub fn path_str(&self) -> String {
-        let prefix = "src/crs/data/";
+        let prefix = "c:/WINDOWS/Temp/";
         let suffix = ".csv";
         let filename = match self {
             PRESETS::HEB => "HEB",
@@ -28,26 +37,37 @@ impl PRESETS {
         buffer
     }
 }
-
 pub struct CrsLib {
     df: LazyFrame,
 }
 
 impl CrsLib {
-    pub fn new(path: &str) -> Self {
-        let path = Path::new(path);
-        dbg!(path);
+    /// Shit function but here we go
+    /// As far as my peanut brain can tell, there isnt an easy API in polars that allow you to create a
+    /// Embeded csv bytes are written into a file that is built into the Temp directory
+    /// The handle is then read back into polars
+    pub fn new(presets: &PRESETS) -> Self {
+        // Grab associated pathnames and bytes for a given type
+        let path = presets.path_str();
+        let bytes = presets.embeded_bytes();
+
+        // Create and write the file
+        let mut file = std::fs::File::create(&path).unwrap();
+        file.write_all(bytes);
+
+        // Enforce stringtype on column 0
         let mut s = Schema::default();
         s.coerce_by_index(0, DataType::Utf8);
-        let file = std::fs::File::open(path.as_os_str()).unwrap();
-        let df = CsvReader::new(file)
+
+        // Create and return lazyframe
+        let df = CsvReader::new(std::fs::File::open(&path).unwrap())
             .with_delimiter(b',')
             .has_header(true)
             .with_dtypes(Some(&s))
             .finish();
         match df {
             Ok(df) => return Self { df: df.lazy() },
-            Err(_) => panic!("Couldnt read that shit"),
+            Err(_) => panic!("Couldnt compile/read file"),
         };
     }
 }
@@ -102,7 +122,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let df = CrsLib::new(&PRESETS::CHS.path_str());
+        let df = CrsLib::new(&PRESETS::CHS);
         let crs = PresetCrs::new("Celsius 355 CHS 323.9x8", &df);
         assert_zeq!(79.40, crs.area());
     }
