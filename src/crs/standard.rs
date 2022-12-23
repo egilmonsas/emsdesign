@@ -14,6 +14,12 @@ pub enum PRESETS {
 }
 
 impl PRESETS {
+    pub fn is_symmetric(&self) -> bool {
+        return match self {
+            PRESETS::HEB => false,
+            PRESETS::CHS => true,
+        };
+    }
     pub fn embeded_bytes(&self) -> &'static [u8] {
         return match self {
             PRESETS::HEB => HEB,
@@ -39,6 +45,7 @@ impl PRESETS {
 }
 pub struct CrsLib {
     df: LazyFrame,
+    is_symmetric: bool,
 }
 
 impl CrsLib {
@@ -66,7 +73,12 @@ impl CrsLib {
             .with_dtypes(Some(&s))
             .finish();
         match df {
-            Ok(df) => return Self { df: df.lazy() },
+            Ok(df) => {
+                return Self {
+                    df: df.lazy(),
+                    is_symmetric: presets.is_symmetric(),
+                }
+            }
             Err(_) => panic!("Couldnt compile/read file"),
         };
     }
@@ -74,6 +86,7 @@ impl CrsLib {
 
 pub struct PresetCrs {
     data: DataFrame,
+    is_symmetric: bool,
 }
 
 impl PresetCrs {
@@ -82,9 +95,18 @@ impl PresetCrs {
         let mask = col("Section").eq(lit(label));
         let temp = lib.df.clone().filter(mask).collect();
         match temp {
-            Ok(df) => return Self { data: df },
+            Ok(df) => {
+                return Self {
+                    data: df,
+                    is_symmetric: lib.is_symmetric,
+                }
+            }
             Err(_) => panic!("Couldnt read that shit"),
         };
+    }
+
+    fn is_symmetric(&self) -> bool {
+        self.is_symmetric
     }
 }
 
@@ -105,13 +127,21 @@ impl CrossSection for PresetCrs {
         self.data.column("Iy[cm4]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
     }
     fn Iz(&self) -> f64 {
-        self.data.column("Iz[cm4]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+        if self.is_symmetric() {
+            self.Iy()
+        } else {
+            self.data.column("Iz[cm4]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+        }
     }
     fn wy(&self) -> f64 {
         self.data.column("Wy[cm3]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(3)
     }
     fn wz(&self) -> f64 {
-        self.data.column("Wz[cm3]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(3)
+        if self.is_symmetric() {
+            self.wy()
+        } else {
+            self.data.column("Wz[cm3]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(3)
+        }
     }
 }
 
