@@ -14,7 +14,7 @@ pub enum PRESETS {
 }
 
 impl PRESETS {
-    fn get(identifier: &str) -> Self {
+    pub fn get(identifier: &str) -> Self {
         return match identifier {
             "HEB" => PRESETS::HEB,
             "CHS" => PRESETS::CHS,
