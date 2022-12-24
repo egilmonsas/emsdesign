@@ -45,7 +45,7 @@ pub trait CrossSection {
             "Iz": self.Iz(),
             "wy": self.wy(),
             "wy,pl": self.wy_pl(),
-            "wy": self.wy(),
+            "wz": self.wz(),
             "wz,pl": self.wz_pl(),
         });
         jsonout
