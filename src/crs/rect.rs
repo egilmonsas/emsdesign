@@ -15,13 +15,16 @@ impl CrsRect {
     }
 }
 impl CrossSection for CrsRect {
+    fn width(&self) -> f64 {
+        self.y
+    }
+    fn height(&self) -> f64 {
+        self.z
+    }
     fn area(&self) -> f64 {
         self.y * self.z
     }
 
-    fn centroid(&self) -> (f64, f64) {
-        (self.y / 2.0, self.z / 2.0)
-    }
     #[allow(non_snake_case)]
     fn Iy(&self) -> f64 {
         self.y * self.z.powi(3) / 12.0
@@ -37,6 +40,14 @@ impl CrossSection for CrsRect {
     }
     fn wz(&self) -> f64 {
         self.Iz() / (self.y / 2.0)
+    }
+
+    fn wy_pl(&self) -> f64 {
+        (1.0 / 4.0) * self.width() * self.height().powi(2)
+    }
+
+    fn wz_pl(&self) -> f64 {
+        (1.0 / 4.0) * self.height() * self.width().powi(2)
     }
 }
 

@@ -14,6 +14,13 @@ pub enum PRESETS {
 }
 
 impl PRESETS {
+    fn get(identifier: &str) -> Self {
+        return match identifier {
+            "HEB" => PRESETS::HEB,
+            "CHS" => PRESETS::CHS,
+            _ => PRESETS::HEB,
+        };
+    }
     pub fn is_symmetric(&self) -> bool {
         return match self {
             PRESETS::HEB => false,
@@ -123,16 +130,23 @@ impl PresetCrs {
 }
 
 impl CrossSection for PresetCrs {
+    fn width(&self) -> f64 {
+        if self.is_symmetric() {
+            self.data.column("d[mm]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+        } else {
+            self.data.column("b[mm]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+        }
+    }
+    fn height(&self) -> f64 {
+        if self.is_symmetric() {
+            self.width()
+        } else {
+            self.data.column("h[mm]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+        }
+    }
     fn area(&self) -> f64 {
         // HELLA TRASH FUNCTION, PLEASE FIX
         self.data.column("A[cm2]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(2)
-    }
-
-    fn centroid(&self) -> (f64, f64) {
-        (
-            self.data.column("d[mm]").unwrap().sum::<f64>().unwrap() / 2.0,
-            self.data.column("d[mm]").unwrap().sum::<f64>().unwrap() / 2.0,
-        )
     }
 
     fn Iy(&self) -> f64 {
@@ -153,6 +167,28 @@ impl CrossSection for PresetCrs {
             self.wy()
         } else {
             self.data.column("Wz[cm3]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(3)
+        }
+    }
+
+    fn wy_pl(&self) -> f64 {
+        self.data
+            .column("Wpl,y[cm3]")
+            .unwrap()
+            .sum::<f64>()
+            .unwrap()
+            * 10.0f64.powi(3)
+    }
+
+    fn wz_pl(&self) -> f64 {
+        if self.is_symmetric() {
+            self.wy_pl()
+        } else {
+            self.data
+                .column("Wpl,z[cm3]")
+                .unwrap()
+                .sum::<f64>()
+                .unwrap()
+                * 10.0f64.powi(3)
         }
     }
 }

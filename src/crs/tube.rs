@@ -25,16 +25,18 @@ impl CrsTube {
 }
 
 impl CrossSection for CrsTube {
+    fn width(&self) -> f64 {
+        self.d
+    }
+    fn height(&self) -> f64 {
+        self.d
+    }
     fn area(&self) -> f64 {
         PI * (self.r().powi(2) - self.r_inner().powi(2))
     }
 
-    fn centroid(&self) -> (f64, f64) {
-        (self.r(), self.r())
-    }
-
     fn Iy(&self) -> f64 {
-        PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4)) 
+        PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4))
     }
     fn Iz(&self) -> f64 {
         PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4))
@@ -45,6 +47,15 @@ impl CrossSection for CrsTube {
 
     fn wz(&self) -> f64 {
         self.Iz() / self.r()
+    }
+
+    fn wy_pl(&self) -> f64 {
+        (4.0 / 3.0) * (self.r().powi(3) - self.r_inner().powi(3))
+    }
+
+    fn wz_pl(&self) -> f64 {
+        // Symmetric about axes
+        self.wy_pl()
     }
 }
 

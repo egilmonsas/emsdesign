@@ -27,30 +27,37 @@ impl CrsBox {
     }
 }
 impl CrossSection for CrsBox {
+    fn width(&self) -> f64 {
+        self.y
+    }
+    fn height(&self) -> f64 {
+        self.z
+    }
     fn area(&self) -> f64 {
         self.y * self.z - self.y_inner() * self.z_inner()
     }
 
-    fn centroid(&self) -> (f64, f64) {
-        (self.y / 2.0, self.z / 2.0)
-    }
     #[allow(non_snake_case)]
     fn Iy(&self) -> f64 {
-        
-            (self.y * self.z.powi(3) - self.y_inner() * self.z_inner().powi(3)) / 12.0
-        
+        (self.y * self.z.powi(3) - self.y_inner() * self.z_inner().powi(3)) / 12.0
     }
     #[allow(non_snake_case)]
     fn Iz(&self) -> f64 {
-        
-            (self.z * self.y.powi(3) - self.z_inner() * self.y_inner().powi(3)) / 12.0
-        
+        (self.z * self.y.powi(3) - self.z_inner() * self.y_inner().powi(3)) / 12.0
     }
     fn wy(&self) -> f64 {
         self.Iy() / (self.z / 2.0)
     }
     fn wz(&self) -> f64 {
         self.Iz() / (self.y / 2.0)
+    }
+
+    fn wy_pl(&self) -> f64 {
+        todo!()
+    }
+
+    fn wz_pl(&self) -> f64 {
+        todo!()
     }
 }
 

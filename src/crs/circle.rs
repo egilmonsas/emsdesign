@@ -20,12 +20,14 @@ impl CrsCircle {
 }
 
 impl CrossSection for CrsCircle {
+    fn width(&self) -> f64 {
+        self.d
+    }
+    fn height(&self) -> f64 {
+        self.d
+    }
     fn area(&self) -> f64 {
         PI * self.r().powi(2)
-    }
-
-    fn centroid(&self) -> (f64, f64) {
-        (self.r(), self.r())
     }
 
     fn Iy(&self) -> f64 {
@@ -40,6 +42,15 @@ impl CrossSection for CrsCircle {
     }
     fn wz(&self) -> f64 {
         PI / 4.0 * self.r().powi(3)
+    }
+
+    fn wy_pl(&self) -> f64 {
+        (4.0 / 3.0) * self.r().powi(3)
+    }
+
+    fn wz_pl(&self) -> f64 {
+        // Symmetric about axes
+        self.wy_pl()
     }
 }
 
