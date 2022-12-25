@@ -132,16 +132,16 @@ impl PresetCrs {
 impl CrossSection for PresetCrs {
     fn width(&self) -> f64 {
         if self.is_symmetric() {
-            self.data.column("d[mm]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+            self.data.column("d[mm]").unwrap().sum::<f64>().unwrap()
         } else {
-            self.data.column("b[mm]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+            self.data.column("b[mm]").unwrap().sum::<f64>().unwrap()
         }
     }
     fn height(&self) -> f64 {
         if self.is_symmetric() {
             self.width()
         } else {
-            self.data.column("h[mm]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+            self.data.column("h[mm]").unwrap().sum::<f64>().unwrap()
         }
     }
     fn area(&self) -> f64 {
