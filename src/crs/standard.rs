@@ -90,13 +90,7 @@ impl CrsLib {
         };
     }
     pub fn sections(&self) -> Vec<String> {
-        let df = self
-            .df
-            .clone()
-            // Sorts by namestring, which kinda sucks for CHS. More elaborate schemes for better sorting would be nice
-            .sort("Section", Default::default())
-            .collect()
-            .unwrap();
+        let df = self.df.clone().collect().unwrap();
 
         let series: Vec<String> = df
             .column("Section")
