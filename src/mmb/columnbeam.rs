@@ -2,11 +2,13 @@ use crate::crs::rect::CrsRect;
 use crate::crs::CrossSection;
 use crate::erc::NSEN_1993::*;
 use crate::mat::steel::Steel;
+use serde_json::{json, Value};
+
+use crate::Axis;
 
 pub struct ColumnBeam {
     pub crs: Box<dyn CrossSection>,
     pub mat: Steel,
-    pub len: f64,
 }
 
 impl Default for ColumnBeam {
@@ -14,24 +16,23 @@ impl Default for ColumnBeam {
         Self {
             crs: Box::new(CrsRect::default()),
             mat: Steel::default(),
-            len: 1.0,
         }
     }
 }
 impl ColumnBeam {
-    pub fn new(crs: Box<dyn CrossSection>, mat: Steel, len: f64) -> Self {
-        Self { crs, mat, len }
+    pub fn new(crs: Box<dyn CrossSection>, mat: Steel) -> Self {
+        Self { crs, mat }
     }
 
-    pub fn axial_cap(&self) -> f64 {
+    pub fn N_pl(&self) -> f64 {
         self.mat.fy * self.crs.area()
     }
 
-    pub fn buckle_cap(&self, lky: f64, lkz: f64) -> f64 {
+    pub fn buckle_cap(&self, lk: f64, axis: Axis) -> f64 {
         {
             // Eurocode 1993 buckling
             let gamma_1 = 1.15;
-            let ncr = self.euler_load((lky, lkz));
+            let ncr = self.euler_load(lk, axis);
             let lambda = _compute_lamba(self.crs.area(), self.mat.fy, ncr);
             let phi = _compute_phi(BuckleCurve::C.alpha(), lambda);
             let khi = f_6_49(phi, lambda);
@@ -39,32 +40,40 @@ impl ColumnBeam {
         }
     }
     #[allow(non_snake_case)]
-    pub fn Mpl_y(&self) -> f64 {
-        self.crs.wy()*self.mat.fy
+    pub fn M_el(&self, axis: Axis) -> f64 {
+        self.crs.w_el(axis) * self.mat.fy
     }
     #[allow(non_snake_case)]
-    pub fn Mpl_z(&self) -> f64 {
-        self.crs.wz()*self.mat.fy
+    pub fn M_pl(&self, axis: Axis) -> f64 {
+        self.crs.w_pl(axis) * self.mat.fy
     }
     #[allow(non_snake_case)]
     pub fn EA(&self) -> f64 {
         self.mat.E * self.crs.area()
     }
     #[allow(non_snake_case)]
-    pub fn EIy(&self) -> f64 {
-        let I = self.crs.Iy();
+    pub fn EI(&self, axis: Axis) -> f64 {
+        let I = self.crs.I(axis);
         I * self.mat.E
     }
-    #[allow(non_snake_case)]
-    pub fn EIz(&self) -> f64 {
-        let I = self.crs.Iy();
-        I * self.mat.E
-    }  
-    pub fn euler_load(&self, lks: (f64, f64)) -> f64 {
-        self.EIy() * (std::f64::consts::PI / lks.0).powi(2).min(
-            self.EIz() * (std::f64::consts::PI / lks.1).powi(2),
-        )
-        
+
+    pub fn euler_load(&self, lk: f64, axis: Axis) -> f64 {
+        self.EI(axis) * (std::f64::consts::PI / lk).powi(2)
+    }
+
+    pub fn json(&self) -> Value {
+        let jsonout = json!({
+            "EA": self.EA(),
+            "EI_y": self.EI(Axis::Y),
+            "EI_z": self.EI(Axis::Z),
+            "N_pl": self.N_pl(),
+            "M_el_y":  self.M_el(Axis::Y),
+            "M_pl_y": self.M_pl(Axis::Y),
+            "M_el_z":  self.M_el(Axis::Z),
+            "M_pl_z": self.M_pl(Axis::Z),
+
+        });
+        jsonout
     }
 }
 
@@ -76,7 +85,7 @@ mod tests {
     #[test]
     fn axial_cap() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.axial_cap(), 3_550_000.0)
+        assert_zeq!(mmb.N_pl(), 3_550_000.0)
     }
     #[test]
     fn axial_cap_circle() {
@@ -84,13 +93,13 @@ mod tests {
             crs: Box::new(CrsCircle::default()),
             ..Default::default()
         };
-        assert_zeq!(mmb.axial_cap(), 2_788_163.480060)
+        assert_zeq!(mmb.N_pl(), 2_788_163.480060)
     }
 
     #[test]
     fn moment_cap() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.Mpl_y(), 59_166_666.66666)
+        assert_zeq!(mmb.M_el(Axis::Y), 59_166_666.66666)
     }
 
     #[test]
@@ -101,13 +110,12 @@ mod tests {
     #[test]
     fn ei() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.EIy(), 1_750_000_000_000.0)
+        assert_zeq!(mmb.EI(Axis::Y), 1_750_000_000_000.0)
     }
     #[test]
     fn euler_load() {
         let mmb = ColumnBeam::default();
-        let lky = 10000.0;
-        let lkz = 10000.0;
-        assert_zeq!(mmb.euler_load((lky, lkz)), 172_718.077019)
+        let lk = 10000.0;
+        assert_zeq!(mmb.euler_load(lk, Axis::Z), 172_718.077019)
     }
 }

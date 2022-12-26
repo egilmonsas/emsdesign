@@ -1,3 +1,5 @@
+use crate::Axis;
+
 use super::CrossSection;
 
 pub struct CrsBox {
@@ -38,25 +40,26 @@ impl CrossSection for CrsBox {
     }
 
     #[allow(non_snake_case)]
-    fn Iy(&self) -> f64 {
-        (self.y * self.z.powi(3) - self.y_inner() * self.z_inner().powi(3)) / 12.0
+    fn I(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y => (self.y * self.z.powi(3) - self.y_inner() * self.z_inner().powi(3)) / 12.0,
+            Axis::Z => (self.z * self.y.powi(3) - self.z_inner() * self.y_inner().powi(3)) / 12.0,
+        }
     }
-    #[allow(non_snake_case)]
-    fn Iz(&self) -> f64 {
-        (self.z * self.y.powi(3) - self.z_inner() * self.y_inner().powi(3)) / 12.0
-    }
-    fn wy(&self) -> f64 {
-        self.Iy() / (self.z / 2.0)
-    }
-    fn wz(&self) -> f64 {
-        self.Iz() / (self.y / 2.0)
+    fn w_el(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y => self.I(axis) / (self.z / 2.0),
+            Axis::Z => self.I(axis) / (self.y / 2.0),
+        }
     }
 
-    fn wy_pl(&self) -> f64 {
-        todo!()
-    }
-
-    fn wz_pl(&self) -> f64 {
+    fn w_pl(&self, axis: Axis) -> f64 {
         todo!()
     }
 }
@@ -110,8 +113,8 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsBox::new(width, height, thickness);
 
-        assert_zeq!(crs.Iy(), 2_886_666.666666);
-        assert_zeq!(crs.Iz(), 861_666.666666);
+        assert_zeq!(crs.I(Axis::Y), 2_886_666.666666);
+        assert_zeq!(crs.I(Axis::Z), 861_666.666666);
     }
 
     #[test]
@@ -121,7 +124,7 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsBox::new(width, height, thickness);
 
-        assert_zeq!(crs.wy(), 2_886_666.666666 / 50.0);
-        assert_zeq!(crs.wz(), 861_666.666666 / 25.0);
+        assert_zeq!(crs.w_el(Axis::Y), 2_886_666.666666 / 50.0);
+        assert_zeq!(crs.w_el(Axis::Z), 861_666.666666 / 25.0);
     }
 }

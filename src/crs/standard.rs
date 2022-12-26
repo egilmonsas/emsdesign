@@ -1,3 +1,5 @@
+use crate::Axis;
+
 use super::CrossSection;
 use std::io::prelude::*;
 
@@ -150,46 +152,61 @@ impl CrossSection for PresetCrs {
         self.data.column("A[cm2]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(2)
     }
 
-    fn Iy(&self) -> f64 {
-        self.data.column("Iy[cm4]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
-    }
-    fn Iz(&self) -> f64 {
-        if self.is_symmetric() {
-            self.Iy()
-        } else {
-            self.data.column("Iz[cm4]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+    fn I(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y => self.data.column("Iy[cm4]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4),
+            Axis::Z => {
+                if self.is_symmetric() {
+                    self.I(Axis::Y)
+                } else {
+                    self.data.column("Iz[cm4]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(4)
+                }
+            }
         }
     }
-    fn wy(&self) -> f64 {
-        self.data.column("Wy[cm3]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(3)
-    }
-    fn wz(&self) -> f64 {
-        if self.is_symmetric() {
-            self.wy()
-        } else {
-            self.data.column("Wz[cm3]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(3)
+    fn w_el(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y => self.data.column("Wy[cm3]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(3),
+            Axis::Z => {
+                if self.is_symmetric() {
+                    self.w_el(Axis::Y)
+                } else {
+                    self.data.column("Wz[cm3]").unwrap().sum::<f64>().unwrap() * 10.0f64.powi(3)
+                }
+            }
         }
     }
-
-    fn wy_pl(&self) -> f64 {
-        self.data
-            .column("Wpl,y[cm3]")
-            .unwrap()
-            .sum::<f64>()
-            .unwrap()
-            * 10.0f64.powi(3)
-    }
-
-    fn wz_pl(&self) -> f64 {
-        if self.is_symmetric() {
-            self.wy_pl()
-        } else {
-            self.data
-                .column("Wpl,z[cm3]")
-                .unwrap()
-                .sum::<f64>()
-                .unwrap()
-                * 10.0f64.powi(3)
+    fn w_pl(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y => {
+                self.data
+                    .column("Wpl,y[cm3]")
+                    .unwrap()
+                    .sum::<f64>()
+                    .unwrap()
+                    * 10.0f64.powi(3)
+            }
+            Axis::Z => {
+                if self.is_symmetric() {
+                    self.w_pl(Axis::Y)
+                } else {
+                    self.data
+                        .column("Wpl,z[cm3]")
+                        .unwrap()
+                        .sum::<f64>()
+                        .unwrap()
+                        * 10.0f64.powi(3)
+                }
+            }
         }
     }
 }

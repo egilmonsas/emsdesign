@@ -1,3 +1,5 @@
+use crate::Axis;
+
 use super::CrossSection;
 
 pub struct CrsRect {
@@ -26,28 +28,33 @@ impl CrossSection for CrsRect {
     }
 
     #[allow(non_snake_case)]
-    fn Iy(&self) -> f64 {
-        self.y * self.z.powi(3) / 12.0
+    fn I(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y => self.y * self.z.powi(3) / 12.0,
+            Axis::Z => self.z * self.y.powi(3) / 12.0,
+        }
     }
 
-    #[allow(non_snake_case)]
-    fn Iz(&self) -> f64 {
-        self.z * self.y.powi(3) / 12.0
+    fn w_el(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y => self.I(axis) / (self.z / 2.0),
+            Axis::Z => self.I(axis) / (self.y / 2.0),
+        }
     }
-
-    fn wy(&self) -> f64 {
-        self.Iy() / (self.z / 2.0)
-    }
-    fn wz(&self) -> f64 {
-        self.Iz() / (self.y / 2.0)
-    }
-
-    fn wy_pl(&self) -> f64 {
-        (1.0 / 4.0) * self.width() * self.height().powi(2)
-    }
-
-    fn wz_pl(&self) -> f64 {
-        (1.0 / 4.0) * self.height() * self.width().powi(2)
+    fn w_pl(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y => (1.0 / 4.0) * self.width() * self.height().powi(2),
+            Axis::Z => (1.0 / 4.0) * self.height() * self.width().powi(2),
+        }
     }
 }
 
@@ -95,8 +102,8 @@ mod tests {
         let height = 300.0;
         let crs = CrsRect::new(width, height);
 
-        assert_zeq!(crs.Iy(), 225_000_000.0);
-        assert_zeq!(crs.Iz(), 25_000_000.0);
+        assert_zeq!(crs.I(Axis::Y), 225_000_000.0);
+        assert_zeq!(crs.I(Axis::Z), 25_000_000.0);
     }
 
     #[test]
@@ -105,7 +112,7 @@ mod tests {
         let height = 300.0;
         let crs = CrsRect::new(width, height);
 
-        assert_zeq!(crs.wy(), 1_500_000.0);
-        assert_zeq!(crs.wz(), 500_000.0);
+        assert_zeq!(crs.w_el(Axis::Y), 1_500_000.0);
+        assert_zeq!(crs.w_el(Axis::Z), 500_000.0);
     }
 }

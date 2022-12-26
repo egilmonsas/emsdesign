@@ -1,5 +1,7 @@
 use std::f64::consts::PI;
 
+use crate::Axis;
+
 use super::CrossSection;
 
 pub struct CrsTube {
@@ -35,27 +37,31 @@ impl CrossSection for CrsTube {
         PI * (self.r().powi(2) - self.r_inner().powi(2))
     }
 
-    fn Iy(&self) -> f64 {
-        PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4))
-    }
-    fn Iz(&self) -> f64 {
-        PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4))
-    }
-    fn wy(&self) -> f64 {
-        self.Iy() / self.r()
-    }
-
-    fn wz(&self) -> f64 {
-        self.Iz() / self.r()
+    fn I(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y | Axis::Z => PI / 4.0 * (self.r().powi(4) - self.r_inner().powi(4)),
+        }
     }
 
-    fn wy_pl(&self) -> f64 {
-        (4.0 / 3.0) * (self.r().powi(3) - self.r_inner().powi(3))
+    fn w_el(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y | Axis::Z => self.I(axis) / self.r(),
+        }
     }
 
-    fn wz_pl(&self) -> f64 {
-        // Symmetric about axes
-        self.wy_pl()
+    fn w_pl(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y | Axis::Z => (4.0 / 3.0) * (self.r().powi(3) - self.r_inner().powi(3)),
+        }
     }
 }
 
@@ -103,8 +109,8 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsTube::new(diameter, thickness);
 
-        assert_zeq!(crs.Iy(), 2_898_119.222936);
-        assert_zeq!(crs.Iz(), 2_898_119.222936);
+        assert_zeq!(crs.I(Axis::Y), 2_898_119.222936);
+        assert_zeq!(crs.I(Axis::Z), 2_898_119.222936);
     }
 
     #[test]
@@ -113,7 +119,7 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsTube::new(diameter, thickness);
 
-        assert_zeq!(crs.wz(), 57_962.384458);
-        assert_zeq!(crs.wy(), 57_962.384458);
+        assert_zeq!(crs.w_el(Axis::Y), 57_962.384458);
+        assert_zeq!(crs.w_el(Axis::Z), 57_962.384458);
     }
 }
