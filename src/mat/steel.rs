@@ -18,7 +18,7 @@ impl SteelVariant {
             _ => SteelVariant::S355,
         };
     }
-    pub fn variants(&self) -> Vec<String> {
+    pub fn variants() -> Vec<String> {
         vec![
             String::from("S235"),
             String::from("S275"),
