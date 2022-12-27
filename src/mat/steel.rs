@@ -13,8 +13,8 @@ impl SteelVariant {
         return match identifier {
             "S235" => SteelVariant::S235,
             "S275" => SteelVariant::S275,
-            "S355" => SteelVariant::S450,
-            "S450" => SteelVariant::S355,
+            "S355" => SteelVariant::S355,
+            "S450" => SteelVariant::S450,
             _ => SteelVariant::S355,
         };
     }

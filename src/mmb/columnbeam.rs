@@ -66,16 +66,21 @@ impl ColumnBeam {
         self.EI(axis) * (std::f64::consts::PI / lk).powi(2)
     }
 
-    pub fn json(&self, limit_state_type: &Gamma) -> Value {
+    pub fn json(&self) -> Value {
         let jsonout = json!({
             "EA": self.EA(),
             "EI_y": self.EI(Axis::Y),
             "EI_z": self.EI(Axis::Z),
-            "N_pl": self.N_pl(limit_state_type),
-            "M_el_y":  self.M_el(Axis::Y,limit_state_type),
-            "M_pl_y": self.M_pl(Axis::Y,limit_state_type),
-            "M_el_z":  self.M_el(Axis::Z,limit_state_type),
-            "M_pl_z": self.M_pl(Axis::Z,limit_state_type),
+            "N_pl_k": self.N_pl( &Gamma::K),
+            "M_el_y_k":  self.M_el(Axis::Y,&Gamma::K),
+            "M_pl_y_k": self.M_pl(Axis::Y,&Gamma::K),
+            "M_el_z_k":  self.M_el(Axis::Z,&Gamma::K),
+            "M_pl_z_k": self.M_pl(Axis::Z,&Gamma::K),
+            "N_pl_d": self.N_pl(&Gamma::D),
+            "M_el_y_d":  self.M_el(Axis::Y,&Gamma::D),
+            "M_pl_y_d": self.M_pl(Axis::Y,&Gamma::D),
+            "M_el_z_d":  self.M_el(Axis::Z,&Gamma::D),
+            "M_pl_z_d": self.M_pl(Axis::Z,&Gamma::D),
 
         });
         jsonout
