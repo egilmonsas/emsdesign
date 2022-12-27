@@ -21,3 +21,17 @@ impl Axis {
         };
     }
 }
+
+pub enum Gamma {
+    K,
+    D,
+}
+impl Gamma {
+    pub fn get(identifier: &str) -> Self {
+        return match identifier {
+            "K" | "k" | "Characteristic" | "characteristic" => Gamma::K,
+            "D" | "d" | "Design" | "design" => Gamma::D,
+            _ => Gamma::K,
+        };
+    }
+}

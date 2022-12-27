@@ -59,7 +59,7 @@ impl CrossSection for CrsBox {
         }
     }
 
-    fn w_pl(&self, axis: Axis) -> f64 {
+    fn w_pl(&self, _axis: Axis) -> f64 {
         todo!()
     }
 }

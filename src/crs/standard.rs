@@ -62,6 +62,8 @@ impl CrsLib {
     /// As far as my peanut brain can tell, there isnt an easy API in polars that allow you to create a
     /// Embeded csv bytes are written into a file that is built into the Temp directory
     /// The handle is then read back into polars
+    ///
+    /// Super low hanging fruit in terms of optimization for instance only create this file once per launch of the app?
     pub fn new(presets: &PRESETS) -> Self {
         // Grab associated pathnames and bytes for a given type
         let path = presets.path_str();
@@ -69,7 +71,7 @@ impl CrsLib {
 
         // Create and write the file
         let mut file = std::fs::File::create(&path).unwrap();
-        file.write_all(bytes);
+        file.write_all(bytes).unwrap();
 
         // Enforce stringtype on column 0
         let mut s = Schema::default();
