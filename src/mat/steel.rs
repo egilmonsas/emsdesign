@@ -10,13 +10,13 @@ pub enum SteelVariant {
 }
 impl SteelVariant {
     pub fn get(identifier: &str) -> Self {
-        return match identifier {
+        match identifier {
             "S235" => SteelVariant::S235,
             "S275" => SteelVariant::S275,
             "S355" => SteelVariant::S355,
             "S450" => SteelVariant::S450,
             _ => SteelVariant::S355,
-        };
+        }
     }
     pub fn variants() -> Vec<String> {
         vec![

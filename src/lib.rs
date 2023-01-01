@@ -13,12 +13,12 @@ pub enum Axis {
 }
 impl Axis {
     pub fn get(identifier: &str) -> Self {
-        return match identifier {
+        match identifier {
             "X" => Axis::X,
             "Y" => Axis::Y,
             "Z" => Axis::Z,
             _ => Axis::Y,
-        };
+        }
     }
 }
 
@@ -28,10 +28,10 @@ pub enum Gamma {
 }
 impl Gamma {
     pub fn get(identifier: &str) -> Self {
-        return match identifier {
+        match identifier {
             "K" | "k" | "Characteristic" | "characteristic" => Gamma::K,
             "D" | "d" | "Design" | "design" => Gamma::D,
             _ => Gamma::K,
-        };
+        }
     }
 }

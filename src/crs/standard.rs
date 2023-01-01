@@ -5,8 +5,8 @@ use std::io::prelude::*;
 
 use polars::prelude::*;
 
-const HEB: &'static [u8] = include_bytes!("./data/HEB.csv");
-const CHS: &'static [u8] = include_bytes!("./data/CHS.csv");
+const HEB: &[u8] = include_bytes!("./data/HEB.csv");
+const CHS: &[u8] = include_bytes!("./data/CHS.csv");
 
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
@@ -17,23 +17,23 @@ pub enum PRESETS {
 
 impl PRESETS {
     pub fn get(identifier: &str) -> Self {
-        return match identifier {
+        match identifier {
             "HEB" => PRESETS::HEB,
             "CHS" => PRESETS::CHS,
             _ => PRESETS::HEB,
-        };
+        }
     }
     pub fn is_symmetric(&self) -> bool {
-        return match self {
+        match self {
             PRESETS::HEB => false,
             PRESETS::CHS => true,
-        };
+        }
     }
     pub fn embeded_bytes(&self) -> &'static [u8] {
-        return match self {
+        match self {
             PRESETS::HEB => HEB,
             PRESETS::CHS => CHS,
-        };
+        }
     }
     pub fn path_str(&self) -> String {
         let prefix = "c:/WINDOWS/Temp/";
@@ -64,6 +64,7 @@ impl CrsLib {
     /// The handle is then read back into polars
     ///
     /// Super low hanging fruit in terms of optimization for instance only create this file once per launch of the app?
+    #[allow(clippy::needless_return)]
     pub fn new(presets: &PRESETS) -> Self {
         // Grab associated pathnames and bytes for a given type
         let path = presets.path_str();
@@ -102,7 +103,7 @@ impl CrsLib {
             .utf8()
             .unwrap()
             .into_no_null_iter()
-            .map(|s| String::from(s))
+            .map(String::from)
             .collect();
         series
     }
@@ -114,6 +115,7 @@ pub struct PresetCrs {
 }
 
 impl PresetCrs {
+    #[allow(clippy::needless_return)]
     pub fn new(label: &str, lib: &CrsLib) -> Self {
         // HELLA TRASH FUNCTION, PLEASE FIX
         let mask = col("Section").eq(lit(label));

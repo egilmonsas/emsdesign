@@ -5,15 +5,22 @@ pub struct LoadCase {
     pub My: f64,
     pub Mz: f64,
 }
-#[allow(non_snake_case)]
-impl LoadCase {
-    pub fn new() -> Self {
+
+impl Default for LoadCase {
+    fn default() -> Self {
         Self {
             N: 0.0,
             Mx: 0.0,
             My: 0.0,
             Mz: 0.0,
         }
+    }
+}
+
+#[allow(non_snake_case)]
+impl LoadCase {
+    pub fn new() -> Self {
+        Self::default()
     }
     pub fn axial_kN(mut self, load: f64) -> Self {
         self.N = load * 1000.0;
