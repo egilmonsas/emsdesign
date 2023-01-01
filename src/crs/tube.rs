@@ -10,11 +10,11 @@ pub struct CrsTube {
 }
 
 impl CrsTube {
-    pub fn new(d: f64, t: f64) -> Self {
+    #[must_use] pub fn new(d: f64, t: f64) -> Self {
         Self { d, t }
     }
 
-    pub fn default() -> Self {
+    #[must_use] pub fn default() -> Self {
         Self { d: 100.0, t: 10.0 }
     }
 
@@ -109,8 +109,8 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsTube::new(diameter, thickness);
 
-        assert_zeq!(crs.I(Axis::Y), 2_898_119.222936);
-        assert_zeq!(crs.I(Axis::Z), 2_898_119.222936);
+        assert_zeq!(crs.I(Axis::Y), 2_898_119.222_936);
+        assert_zeq!(crs.I(Axis::Z), 2_898_119.222_936);
     }
 
     #[test]
@@ -119,7 +119,7 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsTube::new(diameter, thickness);
 
-        assert_zeq!(crs.w_el(Axis::Y), 57_962.384458);
-        assert_zeq!(crs.w_el(Axis::Z), 57_962.384458);
+        assert_zeq!(crs.w_el(Axis::Y), 57_962.384_458);
+        assert_zeq!(crs.w_el(Axis::Z), 57_962.384_458);
     }
 }

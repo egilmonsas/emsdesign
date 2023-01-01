@@ -8,11 +8,11 @@ pub struct CrsRect {
 }
 
 impl CrsRect {
-    pub fn new(y: f64, z: f64) -> Self {
+    #[must_use] pub fn new(y: f64, z: f64) -> Self {
         Self { y, z }
     }
 
-    pub fn default() -> Self {
+    #[must_use] pub fn default() -> Self {
         Self { y: 100.0, z: 100.0 }
     }
 }

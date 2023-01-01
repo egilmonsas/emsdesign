@@ -24,19 +24,19 @@ impl PRESETS {
             _ => None,
         }
     }
-    pub fn is_symmetric(&self) -> bool {
+    #[must_use] pub fn is_symmetric(&self) -> bool {
         match self {
             Self::HEB => false,
             Self::CHS => true,
         }
     }
-    pub fn embeded_bytes(&self) -> &'static [u8] {
+    #[must_use] pub fn embeded_bytes(&self) -> &'static [u8] {
         match self {
             Self::HEB => HEB,
             Self::CHS => CHS,
         }
     }
-    pub fn path_str(&self) -> String {
+    #[must_use] pub fn path_str(&self) -> String {
         let prefix = "c:/WINDOWS/Temp/";
         let suffix = ".csv";
         let filename = match self {
@@ -96,7 +96,7 @@ impl CrsLib {
             is_symmetric: presets.is_symmetric(),
         })
     }
-    pub fn sections(&self) -> Vec<String> {
+    #[must_use] pub fn sections(&self) -> Vec<String> {
         let df = self.df.clone().collect().unwrap();
 
         let series: Vec<String> = df
@@ -118,7 +118,7 @@ pub struct PresetCrs {
 
 impl PresetCrs {
     #[allow(clippy::needless_return)]
-    pub fn new(label: &str, lib: &CrsLib) -> Self {
+    #[must_use] pub fn new(label: &str, lib: &CrsLib) -> Self {
         // HELLA TRASH FUNCTION, PLEASE FIX
         let mask = col("Section").eq(lit(label));
         let temp = lib.df.clone().filter(mask).collect();

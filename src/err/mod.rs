@@ -40,7 +40,7 @@ impl EmsError {
         }
     }
 
-    pub fn file_not_found(message: String, debug: Option<Box<dyn Error>>) -> Self {
+    #[must_use] pub fn file_not_found(message: String, debug: Option<Box<dyn Error>>) -> Self {
         Self::new(EmsErrorKind::FileNotFound, message, debug)
     }
 }

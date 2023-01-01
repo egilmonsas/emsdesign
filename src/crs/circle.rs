@@ -9,11 +9,11 @@ pub struct CrsCircle {
 }
 
 impl CrsCircle {
-    pub fn new(d: f64) -> Self {
+    #[must_use] pub fn new(d: f64) -> Self {
         Self { d }
     }
 
-    pub fn default() -> Self {
+    #[must_use] pub fn default() -> Self {
         Self { d: 100.0 }
     }
     fn r(&self) -> f64 {

@@ -1,5 +1,5 @@
 use crate::crs::CrossSection;
-use crate::erc::NSEN_1993::*;
+use crate::erc::NSEN_1993::{BuckleCurve, _compute_lamba, _compute_phi, f_6_47, f_6_49};
 use crate::mat::steel::Steel;
 use crate::{crs::rect::CrsRect, mat::Material};
 use serde_json::{json, Value};
@@ -20,15 +20,15 @@ impl Default for ColumnBeam {
     }
 }
 impl ColumnBeam {
-    pub fn new(crs: Box<dyn CrossSection>, mat: Steel) -> Self {
+    #[must_use] pub fn new(crs: Box<dyn CrossSection>, mat: Steel) -> Self {
         Self { crs, mat }
     }
     #[allow(non_snake_case)]
-    pub fn N_pl(&self, limit_state_type: &Gamma) -> f64 {
+    #[must_use] pub fn N_pl(&self, limit_state_type: &Gamma) -> f64 {
         self.mat.f_y(limit_state_type) * self.crs.area()
     }
 
-    pub fn buckle_cap(&self, lk: f64, axis: Axis, limit_state_type: &Gamma) -> f64 {
+    #[must_use] pub fn buckle_cap(&self, lk: f64, axis: Axis, limit_state_type: &Gamma) -> f64 {
         {
             // Eurocode 1993 buckling
             let gamma_1 = 1.15;
@@ -45,28 +45,28 @@ impl ColumnBeam {
         }
     }
     #[allow(non_snake_case)]
-    pub fn M_el(&self, axis: Axis, limit_state_type: &Gamma) -> f64 {
+    #[must_use] pub fn M_el(&self, axis: Axis, limit_state_type: &Gamma) -> f64 {
         self.crs.w_el(axis) * self.mat.f_y(limit_state_type)
     }
     #[allow(non_snake_case)]
-    pub fn M_pl(&self, axis: Axis, limit_state_type: &Gamma) -> f64 {
+    #[must_use] pub fn M_pl(&self, axis: Axis, limit_state_type: &Gamma) -> f64 {
         self.crs.w_pl(axis) * self.mat.f_y(limit_state_type)
     }
     #[allow(non_snake_case)]
-    pub fn EA(&self) -> f64 {
+    #[must_use] pub fn EA(&self) -> f64 {
         self.mat.E() * self.crs.area()
     }
     #[allow(non_snake_case)]
-    pub fn EI(&self, axis: Axis) -> f64 {
+    #[must_use] pub fn EI(&self, axis: Axis) -> f64 {
         let I = self.crs.I(axis);
         I * self.mat.E()
     }
 
-    pub fn euler_load(&self, lk: f64, axis: Axis) -> f64 {
+    #[must_use] pub fn euler_load(&self, lk: f64, axis: Axis) -> f64 {
         self.EI(axis) * (std::f64::consts::PI / lk).powi(2)
     }
 
-    pub fn json(&self) -> Value {
+    #[must_use] pub fn json(&self) -> Value {
         let jsonout = json!({
             "EA": self.EA(),
             "EI_y": self.EI(Axis::Y),
