@@ -9,16 +9,8 @@ pub struct CrsBox {
 }
 
 impl CrsBox {
-    pub fn new(y: f64, z: f64, t: f64) -> Self {
+    const fn new(y: f64, z: f64, t: f64) -> Self {
         Self { y, z, t }
-    }
-
-    pub fn default() -> Self {
-        Self {
-            y: 100.0,
-            z: 100.0,
-            t: 10.0,
-        }
     }
 
     fn y_inner(&self) -> f64 {
@@ -28,6 +20,17 @@ impl CrsBox {
         self.z - 2.0 * self.t
     }
 }
+
+impl Default for CrsBox {
+    fn default() -> Self {
+        Self {
+            y: 100.0,
+            z: 100.0,
+            t: 10.0,
+        }
+    }
+}
+
 impl CrossSection for CrsBox {
     fn width(&self) -> f64 {
         self.y
@@ -67,7 +70,7 @@ impl CrossSection for CrsBox {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::zeq::Zeq;
+    use crate::zequality::Zeq;
 
     #[test]
     fn create_cross_section() {
@@ -113,8 +116,8 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsBox::new(width, height, thickness);
 
-        assert_zeq!(crs.I(Axis::Y), 2_886_666.666666);
-        assert_zeq!(crs.I(Axis::Z), 861_666.666666);
+        assert_zeq!(crs.I(Axis::Y), 2_886_666.666_666);
+        assert_zeq!(crs.I(Axis::Z), 861_666.666_666);
     }
 
     #[test]
@@ -124,7 +127,7 @@ mod tests {
         let thickness = 10.0;
         let crs = CrsBox::new(width, height, thickness);
 
-        assert_zeq!(crs.w_el(Axis::Y), 2_886_666.666666 / 50.0);
-        assert_zeq!(crs.w_el(Axis::Z), 861_666.666666 / 25.0);
+        assert_zeq!(crs.w_el(Axis::Y), 2_886_666.666_666 / 50.0);
+        assert_zeq!(crs.w_el(Axis::Z), 861_666.666_666 / 25.0);
     }
 }

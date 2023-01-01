@@ -90,12 +90,12 @@ impl ColumnBeam {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{crs::circle::CrsCircle, zeq::Zeq};
+    use crate::{crs::circle::CrsCircle, zequality::Zeq};
 
     #[test]
     fn axial_cap() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.N_pl(&Gamma::K), 3_550_000.0)
+        assert_zeq!(mmb.N_pl(&Gamma::K), 3_550_000.0);
     }
     #[test]
     fn axial_cap_circle() {
@@ -103,29 +103,29 @@ mod tests {
             crs: Box::new(CrsCircle::default()),
             ..Default::default()
         };
-        assert_zeq!(mmb.N_pl(&Gamma::K), 2_788_163.480060)
+        assert_zeq!(mmb.N_pl(&Gamma::K), 2_788_163.480_060);
     }
 
     #[test]
     fn moment_cap() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.M_el(Axis::Y, &Gamma::K), 59_166_666.66666)
+        assert_zeq!(mmb.M_el(Axis::Y, &Gamma::K), 59_166_666.666_66);
     }
 
     #[test]
     fn ea() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.EA(), 2_100_000_000.0)
+        assert_zeq!(mmb.EA(), 2_100_000_000.0);
     }
     #[test]
     fn ei() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.EI(Axis::Y), 1_750_000_000_000.0)
+        assert_zeq!(mmb.EI(Axis::Y), 1_750_000_000_000.0);
     }
     #[test]
     fn euler_load() {
         let mmb = ColumnBeam::default();
         let lk = 10000.0;
-        assert_zeq!(mmb.euler_load(lk, Axis::Z), 172_718.077019)
+        assert_zeq!(mmb.euler_load(lk, Axis::Z), 172_718.077_019);
     }
 }

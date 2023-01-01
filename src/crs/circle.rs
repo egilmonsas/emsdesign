@@ -63,7 +63,7 @@ impl CrossSection for CrsCircle {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::zeq::Zeq;
+    use crate::zequality::Zeq;
 
     #[test]
     fn create_cross_section() {

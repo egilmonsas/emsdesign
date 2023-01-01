@@ -61,7 +61,7 @@ impl CrossSection for CrsRect {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::zeq::Zeq;
+    use crate::zequality::Zeq;
 
     #[test]
     fn create_rectangular_cross_section() {

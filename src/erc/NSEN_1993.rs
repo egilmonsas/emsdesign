@@ -66,7 +66,7 @@ impl BuckleCurve {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::zeq::Zeq;
+    use crate::zequality::Zeq;
 
     #[test]
     fn test_f_6_2() {

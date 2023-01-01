@@ -1,4 +1,4 @@
-use crate::Axis;
+use crate::{err::EmsError, Axis};
 
 use super::CrossSection;
 use std::io::prelude::*;
@@ -16,31 +16,32 @@ pub enum PRESETS {
 }
 
 impl PRESETS {
-    pub fn get(identifier: &str) -> Self {
+    #[must_use]
+    pub fn get(identifier: &str) -> Option<Self> {
         match identifier {
-            "HEB" => PRESETS::HEB,
-            "CHS" => PRESETS::CHS,
-            _ => PRESETS::HEB,
+            "HEB" => Some(Self::HEB),
+            "CHS" => Some(Self::CHS),
+            _ => None,
         }
     }
     pub fn is_symmetric(&self) -> bool {
         match self {
-            PRESETS::HEB => false,
-            PRESETS::CHS => true,
+            Self::HEB => false,
+            Self::CHS => true,
         }
     }
     pub fn embeded_bytes(&self) -> &'static [u8] {
         match self {
-            PRESETS::HEB => HEB,
-            PRESETS::CHS => CHS,
+            Self::HEB => HEB,
+            Self::CHS => CHS,
         }
     }
     pub fn path_str(&self) -> String {
         let prefix = "c:/WINDOWS/Temp/";
         let suffix = ".csv";
         let filename = match self {
-            PRESETS::HEB => "HEB",
-            PRESETS::CHS => "CHS",
+            Self::HEB => "HEB",
+            Self::CHS => "CHS",
         };
 
         let mut buffer = String::new();
@@ -65,7 +66,7 @@ impl CrsLib {
     ///
     /// Super low hanging fruit in terms of optimization for instance only create this file once per launch of the app?
     #[allow(clippy::needless_return)]
-    pub fn new(presets: &PRESETS) -> Self {
+    pub fn new(presets: &PRESETS) -> Result<Self, EmsError> {
         // Grab associated pathnames and bytes for a given type
         let path = presets.path_str();
         let bytes = presets.embeded_bytes();
@@ -78,21 +79,22 @@ impl CrsLib {
         let mut s = Schema::default();
         s.coerce_by_index(0, DataType::Utf8);
 
-        // Create and return lazyframe
+        // Read file and return lazyframe
         let df = CsvReader::new(std::fs::File::open(&path).unwrap())
             .with_delimiter(b',')
             .has_header(true)
             .with_dtypes(Some(&s))
-            .finish();
-        match df {
-            Ok(df) => {
-                return Self {
-                    df: df.lazy(),
-                    is_symmetric: presets.is_symmetric(),
-                }
-            }
-            Err(_) => panic!("Couldnt compile/read file"),
-        };
+            .finish()
+            .map_err(|e| {
+                EmsError::file_not_found(
+                    format!("Could not read file at path: {}", &path),
+                    Some(Box::new(e)),
+                )
+            })?;
+        Ok(Self {
+            df: df.lazy(),
+            is_symmetric: presets.is_symmetric(),
+        })
     }
     pub fn sections(&self) -> Vec<String> {
         let df = self.df.clone().collect().unwrap();
@@ -218,18 +220,18 @@ impl CrossSection for PresetCrs {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::zeq::Zeq;
+    use crate::zequality::Zeq;
 
     #[test]
     fn it_works() {
         let df = CrsLib::new(&PRESETS::CHS);
-        let crs = PresetCrs::new("Celsius 355 CHS 323.9x8", &df);
+        let crs = PresetCrs::new("Celsius 355 CHS 323.9x8", &df.unwrap());
         assert_zeq!(7940.0, crs.area());
     }
 
     #[test]
     fn can_collect_vector_from_section_names() {
-        let df = CrsLib::new(&PRESETS::CHS);
+        let df = CrsLib::new(&PRESETS::CHS).unwrap();
         dbg!(df.sections());
     }
 }

@@ -8,8 +8,8 @@ pub trait Zeq<T> {
     }
 }
 
-impl Zeq<f64> for f64 {
-    fn zeq(&self, other: f64) -> bool {
+impl Zeq<Self> for f64 {
+    fn zeq(&self, other: Self) -> bool {
         let epsilon = TOLERANCE;
         (*self - other).abs() < epsilon
     }
