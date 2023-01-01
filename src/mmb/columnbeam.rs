@@ -20,24 +20,27 @@ impl Default for ColumnBeam {
     }
 }
 impl ColumnBeam {
-    #[must_use] pub fn new(crs: Box<dyn CrossSection>, mat: Steel) -> Self {
+    #[must_use]
+    pub fn new(crs: Box<dyn CrossSection>, mat: Steel) -> Self {
         Self { crs, mat }
     }
     #[allow(non_snake_case)]
-    #[must_use] pub fn N_pl(&self, limit_state_type: &Gamma) -> f64 {
+    #[must_use]
+    pub fn N_pl(&self, limit_state_type: &Gamma) -> f64 {
         self.mat.f_y(limit_state_type) * self.crs.area()
     }
 
-    #[must_use] pub fn buckle_cap(&self, lk: f64, axis: Axis, limit_state_type: &Gamma) -> f64 {
+    #[must_use]
+    pub fn buckle_cap(&self, lk: f64, axis: Axis, limit_state_type: &Gamma) -> f64 {
         {
             // Eurocode 1993 buckling
             let gamma_1 = 1.15;
             let ncr = self.euler_load(lk, axis);
             let lambda = _compute_lamba(self.crs.area(), self.mat.f_y(limit_state_type), ncr);
             let phi = _compute_phi(BuckleCurve::C.alpha(), lambda);
-            let khi = f_6_49(phi, lambda);
+            let khi_buckle_reduction_factor = f_6_49(phi, lambda);
             f_6_47(
-                khi,
+                khi_buckle_reduction_factor,
                 self.crs.area(),
                 self.mat.f_y(limit_state_type),
                 gamma_1,
@@ -45,28 +48,34 @@ impl ColumnBeam {
         }
     }
     #[allow(non_snake_case)]
-    #[must_use] pub fn M_el(&self, axis: Axis, limit_state_type: &Gamma) -> f64 {
+    #[must_use]
+    pub fn M_el(&self, axis: Axis, limit_state_type: &Gamma) -> f64 {
         self.crs.w_el(axis) * self.mat.f_y(limit_state_type)
     }
     #[allow(non_snake_case)]
-    #[must_use] pub fn M_pl(&self, axis: Axis, limit_state_type: &Gamma) -> f64 {
+    #[must_use]
+    pub fn M_pl(&self, axis: Axis, limit_state_type: &Gamma) -> f64 {
         self.crs.w_pl(axis) * self.mat.f_y(limit_state_type)
     }
     #[allow(non_snake_case)]
-    #[must_use] pub fn EA(&self) -> f64 {
+    #[must_use]
+    pub fn EA(&self) -> f64 {
         self.mat.E() * self.crs.area()
     }
     #[allow(non_snake_case)]
-    #[must_use] pub fn EI(&self, axis: Axis) -> f64 {
+    #[must_use]
+    pub fn EI(&self, axis: Axis) -> f64 {
         let I = self.crs.I(axis);
         I * self.mat.E()
     }
 
-    #[must_use] pub fn euler_load(&self, lk: f64, axis: Axis) -> f64 {
+    #[must_use]
+    pub fn euler_load(&self, lk: f64, axis: Axis) -> f64 {
         self.EI(axis) * (std::f64::consts::PI / lk).powi(2)
     }
 
-    #[must_use] pub fn json(&self) -> Value {
+    #[must_use]
+    pub fn json(&self) -> Value {
         let jsonout = json!({
             "EA": self.EA(),
             "EI_y": self.EI(Axis::Y),

@@ -94,7 +94,7 @@ mod tests {
         let result = crs.area();
         let expected_result = 50.0 * 100.0 - 30.0 * 80.0;
 
-        assert_zeq!(result, expected_result)
+        assert_zeq!(result, expected_result);
     }
 
     #[test]

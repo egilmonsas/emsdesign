@@ -9,15 +9,19 @@ pub struct CrsCircle {
 }
 
 impl CrsCircle {
-    #[must_use] pub fn new(d: f64) -> Self {
+    #[must_use]
+    pub const fn new(d: f64) -> Self {
         Self { d }
     }
 
-    #[must_use] pub fn default() -> Self {
-        Self { d: 100.0 }
-    }
     fn r(&self) -> f64 {
         self.d / 2.0
+    }
+}
+
+impl Default for CrsCircle {
+    fn default() -> Self {
+        Self::new(100.0)
     }
 }
 
@@ -81,7 +85,7 @@ mod tests {
         let result = crs.area();
         let expected_result = PI * 50.0f64.powi(2);
 
-        assert_zeq!(result, expected_result)
+        assert_zeq!(result, expected_result);
     }
 
     #[test]

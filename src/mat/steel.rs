@@ -2,23 +2,25 @@ use crate::Gamma;
 
 use super::Material;
 
-pub enum SteelVariant {
+pub enum Variant {
     S235,
     S275,
     S355,
     S450,
 }
-impl SteelVariant {
-    #[must_use] pub fn get(identifier: &str) -> Self {
+impl Variant {
+    #[must_use]
+    pub fn get(identifier: &str) -> Option<Self> {
         match identifier {
-            "S235" => Self::S235,
-            "S275" => Self::S275,
-            "S355" => Self::S355,
-            "S450" => Self::S450,
-            _ => Self::S355,
+            "S235" => Some(Self::S235),
+            "S275" => Some(Self::S275),
+            "S355" => Some(Self::S355),
+            "S450" => Some(Self::S450),
+            _ => None,
         }
     }
-    #[must_use] pub fn variants() -> Vec<String> {
+    #[must_use]
+    pub fn variants() -> Vec<String> {
         vec![
             String::from("S235"),
             String::from("S275"),
@@ -38,7 +40,8 @@ pub struct Steel {
 }
 
 impl Steel {
-    #[must_use] pub fn new(fy: f64, fu: f64, youngs_modulus: f64, density: f64, gamma_m_0: f64) -> Self {
+    #[must_use]
+    pub const fn new(fy: f64, fu: f64, youngs_modulus: f64, density: f64, gamma_m_0: f64) -> Self {
         Self {
             fy,
             fu,
@@ -48,24 +51,25 @@ impl Steel {
         }
     }
 
-    #[must_use] pub fn from(class: SteelVariant) -> Self {
+    #[must_use]
+    pub fn from(class: &Variant) -> Self {
         match class {
-            SteelVariant::S235 => Self {
+            Variant::S235 => Self {
                 fy: 235.0,
                 fu: 360.0,
                 ..Default::default()
             },
-            SteelVariant::S275 => Self {
+            Variant::S275 => Self {
                 fy: 275.0,
                 fu: 430.0,
                 ..Default::default()
             },
-            SteelVariant::S355 => Self {
+            Variant::S355 => Self {
                 fy: 355.0,
                 fu: 490.0,
                 ..Default::default()
             },
-            SteelVariant::S450 => Self {
+            Variant::S450 => Self {
                 fy: 440.0,
                 fu: 550.0,
                 ..Default::default()
@@ -114,7 +118,7 @@ mod tests {
     }
     #[test]
     fn can_create_expected_steel_class() {
-        let steel = Steel::from(SteelVariant::S355);
+        let steel = Steel::from(&Variant::S355);
         assert_zeq!(steel.f_y(&Gamma::K), 355.0);
         assert_zeq!(steel.f_u(&Gamma::K), 490.0);
     }

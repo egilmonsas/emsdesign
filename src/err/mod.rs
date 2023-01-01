@@ -12,6 +12,7 @@ pub enum EmsErrorKind {
     WriteError,
     FileNotFound,
     FieldNotFound,
+    DataBaseErr,
 }
 
 impl fmt::Display for EmsError {
@@ -39,8 +40,16 @@ impl EmsError {
             debug,
         }
     }
-
-    #[must_use] pub fn file_not_found(message: String, debug: Option<Box<dyn Error>>) -> Self {
+    #[must_use]
+    pub fn write_error(message: String, debug: Option<Box<dyn Error>>) -> Self {
+        Self::new(EmsErrorKind::WriteError, message, debug)
+    }
+    #[must_use]
+    pub fn file_not_found_error(message: String, debug: Option<Box<dyn Error>>) -> Self {
         Self::new(EmsErrorKind::FileNotFound, message, debug)
+    }
+    #[must_use]
+    pub fn database_error(message: String, debug: Option<Box<dyn Error>>) -> Self {
+        Self::new(EmsErrorKind::DataBaseErr, message, debug)
     }
 }

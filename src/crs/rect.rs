@@ -8,11 +8,13 @@ pub struct CrsRect {
 }
 
 impl CrsRect {
-    #[must_use] pub fn new(y: f64, z: f64) -> Self {
+    #[must_use]
+    pub const fn new(y: f64, z: f64) -> Self {
         Self { y, z }
     }
 
-    #[must_use] pub fn default() -> Self {
+    #[must_use]
+    pub const fn default() -> Self {
         Self { y: 100.0, z: 100.0 }
     }
 }
@@ -82,7 +84,7 @@ mod tests {
         let result = crs.area();
         let expected_result = 6.0;
 
-        assert_zeq!(result, expected_result)
+        assert_zeq!(result, expected_result);
     }
 
     #[test]

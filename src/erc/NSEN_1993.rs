@@ -1,44 +1,49 @@
 #[allow(non_snake_case)]
 
 /// Design check 6.2 for columnbeam
-#[must_use] pub fn f_6_2(N_ed: f64, My_ed: f64, Mz_ed: f64, N_rd: f64, My_rd: f64, Mz_rd: f64) -> f64 {
+#[must_use]
+pub fn f_6_2(N_ed: f64, My_ed: f64, Mz_ed: f64, N_rd: f64, My_rd: f64, Mz_rd: f64) -> f64 {
     N_ed / N_rd + My_ed / My_rd + Mz_ed / Mz_rd
 }
 
 /// Reduced capacity to account for shear forces
 /// Not necessary to reduce if Ved < 0.5 Vrd
-#[must_use] pub fn f_6_29(fy: f64, rho: f64) -> f64 {
+#[must_use]
+pub fn f_6_29(fy: f64, rho: f64) -> f64 {
     (1.0 - rho) * fy
 }
 
 /// Reduction factor rho for shear when computing moment
-#[must_use] pub fn _compute_rho(Ved: f64, Vpl_rd: f64) -> f64 {
+#[must_use]
+pub fn _compute_rho(Ved: f64, Vpl_rd: f64) -> f64 {
     ((2.0 * Ved) / (Vpl_rd) - 1.0).powi(2)
 }
 
 /*----------------- BUCKLING ------------------*/
 
 /// Buckling capacity for centric loaded column
-#[must_use] pub fn f_6_47(khi: f64, area: f64, fy: f64, gamma_1: f64) -> f64 {
+#[must_use]
+pub fn f_6_47(khi: f64, area: f64, fy: f64, gamma_1: f64) -> f64 {
     khi * area * fy / gamma_1
 }
 
 /// Buckling reduction factor
-#[must_use] pub fn f_6_49(phi: f64, lambda: f64) -> f64 {
+#[must_use]
+pub fn f_6_49(phi: f64, lambda: f64) -> f64 {
     // Calculate khi
-    let khi = 1.0 / (phi + (phi.powi(2) - lambda.powi(2)).sqrt());
+    let khi_reduction_factor = 1.0 / (phi + (phi.powi(2) - lambda.powi(2)).sqrt());
     // Upper bounded by 1.0
-    khi.clamp(0.0, 1.0)
+    khi_reduction_factor.clamp(0.0, 1.0)
 }
 
-#[must_use] pub fn _compute_phi(alpha: f64, lambda: f64) -> f64 {
+#[must_use]
+pub fn _compute_phi(alpha: f64, lambda: f64) -> f64 {
     0.5 * lambda.mul_add(lambda, alpha.mul_add(lambda - 0.2, 1.0))
 }
 
-#[must_use] pub fn _compute_lamba(area: f64, fy: f64, n_cr: f64) -> f64 {
-    let lambda = (area * fy / n_cr).sqrt();
-    assert!(!(lambda < 0.0), "Lambda came out as a negative number, something has gone terribly wrong");
-    lambda
+#[must_use]
+pub fn _compute_lamba(area: f64, fy: f64, n_cr: f64) -> f64 {
+    (area * fy / n_cr).sqrt()
 }
 
 pub enum BuckleCurve {
@@ -50,7 +55,8 @@ pub enum BuckleCurve {
 }
 
 impl BuckleCurve {
-    #[must_use] pub fn alpha(&self) -> f64 {
+    #[must_use]
+    pub const fn alpha(&self) -> f64 {
         match self {
             Self::A0 => 0.13,
             Self::A => 0.21,

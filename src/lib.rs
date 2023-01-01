@@ -14,12 +14,13 @@ pub enum Axis {
     Z,
 }
 impl Axis {
-    #[must_use] pub fn get(identifier: &str) -> Self {
+    #[must_use]
+    pub fn get(identifier: &str) -> Option<Self> {
         match identifier {
-            "X" => Self::X,
-            "Y" => Self::Y,
-            "Z" => Self::Z,
-            _ => Self::Y,
+            "X" => Some(Self::X),
+            "Y" => Some(Self::Y),
+            "Z" => Some(Self::Z),
+            _ => None,
         }
     }
 }
@@ -29,11 +30,12 @@ pub enum Gamma {
     D,
 }
 impl Gamma {
-    #[must_use] pub fn get(identifier: &str) -> Self {
+    #[must_use]
+    pub fn get(identifier: &str) -> Option<Self> {
         match identifier {
-            "K" | "k" | "Characteristic" | "characteristic" => Self::K,
-            "D" | "d" | "Design" | "design" => Self::D,
-            _ => Self::K,
+            "K" | "k" | "Characteristic" | "characteristic" => Some(Self::K),
+            "D" | "d" | "Design" | "design" => Some(Self::D),
+            _ => None,
         }
     }
 }

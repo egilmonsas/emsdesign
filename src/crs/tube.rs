@@ -10,12 +10,9 @@ pub struct CrsTube {
 }
 
 impl CrsTube {
-    #[must_use] pub fn new(d: f64, t: f64) -> Self {
+    #[must_use]
+    pub const fn new(d: f64, t: f64) -> Self {
         Self { d, t }
-    }
-
-    #[must_use] pub fn default() -> Self {
-        Self { d: 100.0, t: 10.0 }
     }
 
     fn r(&self) -> f64 {
@@ -23,6 +20,12 @@ impl CrsTube {
     }
     fn r_inner(&self) -> f64 {
         self.d / 2.0 - self.t
+    }
+}
+
+impl Default for CrsTube {
+    fn default() -> Self {
+        Self { d: 100.0, t: 10.0 }
     }
 }
 
@@ -89,7 +92,7 @@ mod tests {
         let result = crs.area();
         let expected_result = PI * (50.0 * 50.0 - 40.0 * 40.0);
 
-        assert_zeq!(result, expected_result)
+        assert_zeq!(result, expected_result);
     }
 
     #[test]
