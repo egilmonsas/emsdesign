@@ -1,13 +1,18 @@
 use std::error::Error;
 use std::fmt;
 
+use serde::{Deserialize, Serialize};
+
 #[allow(unused)]
+#[derive(Serialize)]
 pub struct EmsError {
     error_kind: EmsErrorKind,
     message: String,
+    #[serde(skip_serializing)]
     debug: Option<Box<dyn Error>>,
 }
 
+#[derive(Serialize)]
 pub enum EmsErrorKind {
     WriteError,
     FileNotFound,
