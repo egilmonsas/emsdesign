@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fmt;
 
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 #[allow(unused)]
 #[derive(Serialize)]

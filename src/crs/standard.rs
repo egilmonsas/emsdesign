@@ -189,8 +189,8 @@ impl PresetCrs {
                 area: Self::read_value(&temp, "A[cm2]")? * 1e2,
                 area_shear_y: Self::read_value(&temp, "Ay[cm2]")? * 1e2,
                 area_shear_z: Self::read_value(&temp, "Az[cm2]")? * 1e2,
-                width: Self::read_value(&temp, "d[mm]")?,
-                height: Self::read_value(&temp, "d[mm]")?,
+                width: Self::read_value(&temp, "b[mm]")?,
+                height: Self::read_value(&temp, "h[mm]")?,
                 inertia_y: Self::read_value(&temp, "Iy[cm4]")? * 1e4,
                 w_elastic_y: Self::read_value(&temp, "Wy[cm3]")? * 1e3,
                 w_plastic_y: Self::read_value(&temp, "Wpl,y[cm3]")? * 1e3,
@@ -222,7 +222,7 @@ impl CrossSection for PresetCrs {
         self.height
     }
     fn area(&self) -> f64 {
-        self.area * 1e2
+        self.area
     }
 
     fn I(&self, axis: Axis) -> f64 {
@@ -274,9 +274,8 @@ mod tests {
         let df = CrsLib::new(&PRESETS::CHS);
         let crs = PresetCrs::new("Celsius 355 CHS 323.9x8", &df.expect("Couldnt create df"))
             .expect("Couldnt create crs");
-        assert_zeq!(794_000.0, crs.area());
+        assert_zeq!(7_940.0, crs.area());
     }
-
     #[test]
     fn can_collect_vector_from_section_names() {
         let df = CrsLib::new(&PRESETS::CHS).expect("Couldnt create df");

@@ -85,7 +85,7 @@ impl ColumnBeam {
             "EI_y": self.EI(Axis::Y),
             "EI_z": self.EI(Axis::Z),
             "N_pl_k": self.N_pl( &LimitStateType::K),
-            "V_pl_y_k": self.V_pl(Axis::Y, &LimitStateType::D),
+            "V_pl_y_k": self.V_pl(Axis::Y, &LimitStateType::K),
             "M_el_y_k":  self.M_el(Axis::Y,&LimitStateType::K),
             "M_pl_y_k": self.M_pl(Axis::Y,&LimitStateType::K),
             "V_pl_z_k": self.V_pl(Axis::Z, &LimitStateType::D),
