@@ -29,19 +29,24 @@ impl ColumnBeam {
     pub fn N_pl(&self, limit_state_type: &LimitStateType) -> f64 {
         self.mat.f_y(limit_state_type) * self.crs.area()
     }
+    #[allow(non_snake_case)]
+    #[must_use]
+    pub fn V_pl(&self, axis: Axis, limit_state_type: &LimitStateType) -> f64 {
+        self.mat.f_y(limit_state_type) * self.crs.area_shear(axis) / 3f64.sqrt()
+    }
 
     #[must_use]
     pub fn buckle_cap(&self, lk: f64, axis: Axis, limit_state_type: &LimitStateType) -> f64 {
         {
             // Eurocode 1993 buckling
             let ncr = self.euler_load(lk, axis);
-            let lambda = _compute_lamba(self.crs.area(), self.mat.f_y(limit_state_type), ncr);
+            let lambda = _compute_lamba(self.crs.area(), self.mat.f_y(&LimitStateType::K), ncr);
             let phi = _compute_phi(BuckleCurve::C.alpha(), lambda);
             let khi_buckle_reduction_factor = f_6_49(phi, lambda);
             f_6_47(
                 khi_buckle_reduction_factor,
                 self.crs.area(),
-                self.mat.f_y(limit_state_type),
+                self.mat.f_y(&LimitStateType::K),
                 self.mat.gamma_m1(limit_state_type),
             )
         }
