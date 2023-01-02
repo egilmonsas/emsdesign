@@ -4,12 +4,12 @@ use crate::Axis;
 
 use super::CrossSection;
 
-pub struct CrsTube {
+pub struct Tube {
     d: f64,
     t: f64,
 }
 
-impl CrsTube {
+impl Tube {
     #[must_use]
     pub const fn new(d: f64, t: f64) -> Self {
         Self { d, t }
@@ -23,13 +23,13 @@ impl CrsTube {
     }
 }
 
-impl Default for CrsTube {
+impl Default for Tube {
     fn default() -> Self {
         Self { d: 100.0, t: 10.0 }
     }
 }
 
-impl CrossSection for CrsTube {
+impl CrossSection for Tube {
     fn width(&self) -> f64 {
         self.d
     }
@@ -66,6 +66,10 @@ impl CrossSection for CrsTube {
             Axis::Y | Axis::Z => (4.0 / 3.0) * (self.r().powi(3) - self.r_inner().powi(3)),
         }
     }
+
+    fn area_shear(&self, _axis: Axis) -> f64 {
+        todo!()
+    }
 }
 
 #[cfg(test)]
@@ -77,7 +81,7 @@ mod tests {
     fn create_cross_section() {
         let diameter = 100.0;
         let thickness = 10.0;
-        let crs = CrsTube::new(diameter, thickness);
+        let crs = Tube::new(diameter, thickness);
 
         assert_zeq!(crs.d, diameter);
         assert_nzeq!(crs.t, diameter);
@@ -87,7 +91,7 @@ mod tests {
     fn area_cross_section() {
         let diameter = 100.0;
         let thickness = 10.0;
-        let crs = CrsTube::new(diameter, thickness);
+        let crs = Tube::new(diameter, thickness);
 
         let result = crs.area();
         let expected_result = PI * (50.0 * 50.0 - 40.0 * 40.0);
@@ -99,7 +103,7 @@ mod tests {
     fn centroid_cross_section() {
         let diameter = 100.0;
         let thickness = 10.0;
-        let crs = CrsTube::new(diameter, thickness);
+        let crs = Tube::new(diameter, thickness);
 
         let centroid = crs.centroid();
         assert_zeq!(centroid.0, 50.0);
@@ -110,7 +114,7 @@ mod tests {
     fn second_moment_of_area() {
         let diameter = 100.0;
         let thickness = 10.0;
-        let crs = CrsTube::new(diameter, thickness);
+        let crs = Tube::new(diameter, thickness);
 
         assert_zeq!(crs.I(Axis::Y), 2_898_119.222_936);
         assert_zeq!(crs.I(Axis::Z), 2_898_119.222_936);
@@ -120,7 +124,7 @@ mod tests {
     fn bending_moment() {
         let diameter = 100.0;
         let thickness = 10.0;
-        let crs = CrsTube::new(diameter, thickness);
+        let crs = Tube::new(diameter, thickness);
 
         assert_zeq!(crs.w_el(Axis::Y), 57_962.384_458);
         assert_zeq!(crs.w_el(Axis::Z), 57_962.384_458);

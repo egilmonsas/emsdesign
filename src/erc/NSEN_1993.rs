@@ -82,10 +82,9 @@ mod tests {
         let khi = 0.6;
         let area = 1000.0;
         let fy = 355.0;
-        let gamma_1 = 1.15;
-
+        let gamma_1 = 1.1;
         let res = f_6_47(khi, area, fy, gamma_1);
-        assert_zeq!(res, 185_217.391_304);
+        assert_zeq!(res, 193_636.363_636_363_62);
     }
     #[test]
     pub fn function_f_6_49_yields_correct_value_for_normal_input() {

@@ -18,6 +18,9 @@ pub trait CrossSection {
     /// Area in
     /// [mm^2]
     fn area(&self) -> f64;
+    /// Area in
+    /// [mm^2]
+    fn area_shear(&self, axis: Axis) -> f64;
     /// Yc, Zc, as measured from bottom left corner in
     /// [mm]
     fn centroid(&self) -> (f64, f64) {
@@ -37,6 +40,8 @@ pub trait CrossSection {
             "width": self.width(),
             "height": self.height(),
             "area":  self.area(),
+            "A_v_y":  self.area_shear(Axis::Y),
+            "A_v_z":  self.area_shear(Axis::Z),
             "I_y": self.I(Axis::Y),
             "I_z": self.I(Axis::Z),
             "w_el_y": self.w_el(Axis::Y),

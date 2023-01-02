@@ -2,12 +2,12 @@ use crate::Axis;
 
 use super::CrossSection;
 
-pub struct CrsRect {
+pub struct Rect {
     y: f64,
     z: f64,
 }
 
-impl CrsRect {
+impl Rect {
     #[must_use]
     pub const fn new(y: f64, z: f64) -> Self {
         Self { y, z }
@@ -18,7 +18,7 @@ impl CrsRect {
         Self { y: 100.0, z: 100.0 }
     }
 }
-impl CrossSection for CrsRect {
+impl CrossSection for Rect {
     fn width(&self) -> f64 {
         self.y
     }
@@ -58,6 +58,10 @@ impl CrossSection for CrsRect {
             Axis::Z => (1.0 / 4.0) * self.height() * self.width().powi(2),
         }
     }
+
+    fn area_shear(&self, _axis: Axis) -> f64 {
+        todo!()
+    }
 }
 
 #[cfg(test)]
@@ -69,7 +73,7 @@ mod tests {
     fn create_rectangular_cross_section() {
         let a = 2.0;
         let b = 3.0;
-        let crs = CrsRect::new(a, b);
+        let crs = Rect::new(a, b);
 
         assert_zeq!(crs.y, a);
         assert_nzeq!(crs.z, a);
@@ -79,7 +83,7 @@ mod tests {
     fn area_rectangular_cross_section() {
         let a = 2.0;
         let b = 3.0;
-        let crs = CrsRect::new(a, b);
+        let crs = Rect::new(a, b);
 
         let result = crs.area();
         let expected_result = 6.0;
@@ -91,7 +95,7 @@ mod tests {
     fn centroid_rectangular_cross_section() {
         let a = 2.0;
         let b = 3.0;
-        let crs = CrsRect::new(a, b);
+        let crs = Rect::new(a, b);
 
         let centroid = crs.centroid();
         assert_zeq!(centroid.0, 1.0);
@@ -102,7 +106,7 @@ mod tests {
     fn second_moment_of_area_rectangular_cross_section() {
         let width = 100.0;
         let height = 300.0;
-        let crs = CrsRect::new(width, height);
+        let crs = Rect::new(width, height);
 
         assert_zeq!(crs.I(Axis::Y), 225_000_000.0);
         assert_zeq!(crs.I(Axis::Z), 25_000_000.0);
@@ -112,7 +116,7 @@ mod tests {
     fn bending_moment_rectangular_cross_section() {
         let width = 100.0;
         let height = 300.0;
-        let crs = CrsRect::new(width, height);
+        let crs = Rect::new(width, height);
 
         assert_zeq!(crs.w_el(Axis::Y), 1_500_000.0);
         assert_zeq!(crs.w_el(Axis::Z), 500_000.0);

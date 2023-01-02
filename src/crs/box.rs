@@ -2,13 +2,14 @@ use crate::Axis;
 
 use super::CrossSection;
 
-pub struct CrsBox {
+pub struct Box {
     y: f64,
     z: f64,
     t: f64,
 }
 
-impl CrsBox {
+impl Box {
+    #[must_use]
     const fn new(y: f64, z: f64, t: f64) -> Self {
         Self { y, z, t }
     }
@@ -21,7 +22,7 @@ impl CrsBox {
     }
 }
 
-impl Default for CrsBox {
+impl Default for Box {
     fn default() -> Self {
         Self {
             y: 100.0,
@@ -31,7 +32,7 @@ impl Default for CrsBox {
     }
 }
 
-impl CrossSection for CrsBox {
+impl CrossSection for Box {
     fn width(&self) -> f64 {
         self.y
     }
@@ -65,19 +66,22 @@ impl CrossSection for CrsBox {
     fn w_pl(&self, _axis: Axis) -> f64 {
         todo!()
     }
+
+    fn area_shear(&self, _axis: Axis) -> f64 {
+        todo!()
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::zequality::Zeq;
-
     #[test]
     fn create_cross_section() {
         let width = 50.0;
         let height = 100.0;
         let thickness = 1.0;
-        let crs = CrsBox::new(width, height, thickness);
+        let crs = Box::new(width, height, thickness);
 
         assert_zeq!(crs.y, width);
         assert_zeq!(crs.z, height);
@@ -89,7 +93,7 @@ mod tests {
         let width = 50.0;
         let height = 100.0;
         let thickness = 10.0;
-        let crs = CrsBox::new(width, height, thickness);
+        let crs = Box::new(width, height, thickness);
 
         let result = crs.area();
         let expected_result = 50.0 * 100.0 - 30.0 * 80.0;
@@ -102,7 +106,7 @@ mod tests {
         let width = 50.0;
         let height = 100.0;
         let thickness = 10.0;
-        let crs = CrsBox::new(width, height, thickness);
+        let crs = Box::new(width, height, thickness);
 
         let centroid = crs.centroid();
         assert_zeq!(centroid.0, 25.0);
@@ -114,7 +118,7 @@ mod tests {
         let width = 50.0;
         let height = 100.0;
         let thickness = 10.0;
-        let crs = CrsBox::new(width, height, thickness);
+        let crs = Box::new(width, height, thickness);
 
         assert_zeq!(crs.I(Axis::Y), 2_886_666.666_666);
         assert_zeq!(crs.I(Axis::Z), 861_666.666_666);
@@ -125,7 +129,7 @@ mod tests {
         let width = 50.0;
         let height = 100.0;
         let thickness = 10.0;
-        let crs = CrsBox::new(width, height, thickness);
+        let crs = Box::new(width, height, thickness);
 
         assert_zeq!(crs.w_el(Axis::Y), 2_886_666.666_666 / 50.0);
         assert_zeq!(crs.w_el(Axis::Z), 861_666.666_666 / 25.0);

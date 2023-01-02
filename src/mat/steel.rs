@@ -1,4 +1,4 @@
-use crate::Gamma;
+use crate::LimitStateType;
 
 use super::Material;
 
@@ -36,18 +36,27 @@ pub struct Steel {
     fu: f64,
     youngs_modulus: f64,
     density: f64,
-    gamma_m_0: f64,
+    gamma_m0: f64,
+    gamma_m1: f64,
 }
 
 impl Steel {
     #[must_use]
-    pub const fn new(fy: f64, fu: f64, youngs_modulus: f64, density: f64, gamma_m_0: f64) -> Self {
+    pub const fn new(
+        fy: f64,
+        fu: f64,
+        youngs_modulus: f64,
+        density: f64,
+        gamma_m0: f64,
+        gamma_m1: f64,
+    ) -> Self {
         Self {
             fy,
             fu,
             youngs_modulus,
             density,
-            gamma_m_0,
+            gamma_m0,
+            gamma_m1,
         }
     }
 
@@ -80,7 +89,7 @@ impl Steel {
 
 impl Default for Steel {
     fn default() -> Self {
-        Self::new(355.0, 490.0, 210_000.0, 7850.0, 1.05)
+        Self::new(355.0, 490.0, 210_000.0, 7850.0, 1.05, 1.05)
     }
 }
 
@@ -91,16 +100,22 @@ impl Material for Steel {
     fn rho(&self) -> f64 {
         self.density
     }
-    fn f_y(&self, limit_state_type: &Gamma) -> f64 {
-        self.fy / self.gamma(limit_state_type)
+    fn f_y(&self, limit_state_type: &LimitStateType) -> f64 {
+        self.fy / self.gamma_m0(limit_state_type)
     }
-    fn f_u(&self, limit_state_type: &Gamma) -> f64 {
-        self.fu / self.gamma(limit_state_type)
+    fn f_u(&self, limit_state_type: &LimitStateType) -> f64 {
+        self.fu / self.gamma_m0(limit_state_type)
     }
-    fn gamma(&self, limit_state_type: &Gamma) -> f64 {
+    fn gamma_m0(&self, limit_state_type: &LimitStateType) -> f64 {
         match limit_state_type {
-            Gamma::K => 1.00,
-            Gamma::D => self.gamma_m_0,
+            LimitStateType::K => 1.00,
+            LimitStateType::D => self.gamma_m0,
+        }
+    }
+    fn gamma_m1(&self, limit_state_type: &LimitStateType) -> f64 {
+        match limit_state_type {
+            LimitStateType::K => 1.00,
+            LimitStateType::D => self.gamma_m1,
         }
     }
 }
@@ -113,13 +128,13 @@ mod tests {
     #[test]
     fn correct_gamma() {
         let steel = Steel::default();
-        assert_zeq!(steel.gamma(&Gamma::K), 1.00);
-        assert_zeq!(steel.gamma(&Gamma::D), 1.05);
+        assert_zeq!(steel.gamma_m0(&LimitStateType::K), 1.00);
+        assert_zeq!(steel.gamma_m0(&LimitStateType::D), 1.05);
     }
     #[test]
     fn can_create_expected_steel_class() {
         let steel = Steel::from(&Variant::S355);
-        assert_zeq!(steel.f_y(&Gamma::K), 355.0);
-        assert_zeq!(steel.f_u(&Gamma::K), 490.0);
+        assert_zeq!(steel.f_y(&LimitStateType::K), 355.0);
+        assert_zeq!(steel.f_u(&LimitStateType::K), 490.0);
     }
 }

@@ -150,6 +150,8 @@ pub struct PresetCrs {
     width: f64,
     height: f64,
     area: f64,
+    area_shear_y: f64,
+    area_shear_z: f64,
     inertia_y: f64,
     w_elastic_y: f64,
     w_plastic_y: f64,
@@ -171,6 +173,8 @@ impl PresetCrs {
         let out = if lib.is_symmetric {
             Self {
                 area: Self::read_value(&temp, "A[cm2]")? * 1e2,
+                area_shear_y: Self::read_value(&temp, "Ay[cm2]")? * 1e2,
+                area_shear_z: Self::read_value(&temp, "Ay[cm2]")? * 1e2,
                 width: Self::read_value(&temp, "d[mm]")?,
                 height: Self::read_value(&temp, "d[mm]")?,
                 inertia_y: Self::read_value(&temp, "Iy[cm4]")? * 1e4,
@@ -183,6 +187,8 @@ impl PresetCrs {
         } else {
             Self {
                 area: Self::read_value(&temp, "A[cm2]")? * 1e2,
+                area_shear_y: Self::read_value(&temp, "Ay[cm2]")? * 1e2,
+                area_shear_z: Self::read_value(&temp, "Az[cm2]")? * 1e2,
                 width: Self::read_value(&temp, "d[mm]")?,
                 height: Self::read_value(&temp, "d[mm]")?,
                 inertia_y: Self::read_value(&temp, "Iy[cm4]")? * 1e4,
@@ -244,6 +250,16 @@ impl CrossSection for PresetCrs {
             }
             Axis::Y => self.w_plastic_y,
             Axis::Z => self.w_plastic_z,
+        }
+    }
+
+    fn area_shear(&self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => {
+                todo!()
+            }
+            Axis::Y => self.area_shear_y,
+            Axis::Z => self.area_shear_z,
         }
     }
 }

@@ -7,7 +7,6 @@ pub mod err;
 pub mod load;
 pub mod mat;
 pub mod mmb;
-
 pub enum Axis {
     X,
     Y,
@@ -25,11 +24,11 @@ impl Axis {
     }
 }
 
-pub enum Gamma {
+pub enum LimitStateType {
     K,
     D,
 }
-impl Gamma {
+impl LimitStateType {
     #[must_use]
     pub fn get(identifier: &str) -> Option<Self> {
         match identifier {
