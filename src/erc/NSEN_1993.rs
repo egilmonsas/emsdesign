@@ -65,6 +65,17 @@ impl BuckleCurve {
             Self::D => 0.76,
         }
     }
+    #[must_use]
+    pub fn get(identifier: &str) -> Option<Self> {
+        match identifier {
+            "A0" | "a0" => Some(Self::A0),
+            "A" | "a" => Some(Self::A),
+            "B" | "b" => Some(Self::B),
+            "C" | "c" => Some(Self::C),
+            "D" | "d" => Some(Self::D),
+            _ => None,
+        }
+    }
 }
 
 #[cfg(test)]

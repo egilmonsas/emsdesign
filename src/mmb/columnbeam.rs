@@ -36,12 +36,18 @@ impl ColumnBeam {
     }
 
     #[must_use]
-    pub fn buckle_cap(&self, lk: f64, axis: Axis, limit_state_type: &LimitStateType) -> f64 {
+    pub fn buckle_cap(
+        &self,
+        lk: f64,
+        axis: Axis,
+        buckle_curve: &BuckleCurve,
+        limit_state_type: &LimitStateType,
+    ) -> f64 {
         {
             // Eurocode 1993 buckling
             let ncr = self.euler_load(lk, axis);
             let lambda = _compute_lamba(self.crs.area(), self.mat.f_y(&LimitStateType::K), ncr);
-            let phi = _compute_phi(BuckleCurve::C.alpha(), lambda);
+            let phi = _compute_phi(buckle_curve.alpha(), lambda);
             let khi_buckle_reduction_factor = f_6_49(phi, lambda);
             f_6_47(
                 khi_buckle_reduction_factor,
