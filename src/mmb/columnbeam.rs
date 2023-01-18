@@ -1,7 +1,7 @@
 use crate::crs::CrossSection;
 use crate::erc::NSEN_1993::{BuckleCurve, _compute_lamba, _compute_phi, f_6_47, f_6_49};
 use crate::mat::steel::Steel;
-use crate::{crs::rect::Rect, mat::Material};
+use crate::{crs::heb::CrsHEB, mat::Material};
 use serde_json::{json, Value};
 
 use crate::{Axis, LimitStateType};
@@ -14,7 +14,7 @@ pub struct ColumnBeam {
 impl Default for ColumnBeam {
     fn default() -> Self {
         Self {
-            crs: Box::new(Rect::default()),
+            crs: Box::new(CrsHEB::default()),
             mat: Steel::default(),
         }
     }
@@ -113,42 +113,42 @@ impl ColumnBeam {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{crs::circle::Circle, zequality::Zeq};
+    use crate::zequality::Zeq;
 
     #[test]
     fn axial_cap() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.N_pl(&LimitStateType::K), 3_550_000.0);
+        assert_zeq!(mmb.N_pl(&LimitStateType::K), 923000.0);
     }
     #[test]
     fn axial_cap_circle() {
         let mmb = ColumnBeam {
-            crs: Box::new(Circle::default()),
+            crs: Box::new(CrsHEB::default()),
             ..Default::default()
         };
-        assert_zeq!(mmb.N_pl(&LimitStateType::K), 2_788_163.480_060);
+        assert_zeq!(mmb.N_pl(&LimitStateType::K), 923000.0);
     }
 
     #[test]
     fn moment_cap() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.M_el(Axis::Y, &LimitStateType::K), 59_166_666.666_66);
+        assert_zeq!(mmb.M_el(Axis::Y, &LimitStateType::K), 31914500.0);
     }
 
     #[test]
     fn ea() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.EA(), 2_100_000_000.0);
+        assert_zeq!(mmb.EA(), 546000000.0);
     }
     #[test]
     fn ei() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.EI(Axis::Y), 1_750_000_000_000.0);
+        assert_zeq!(mmb.EI(Axis::Y), 945000000000.0);
     }
     #[test]
     fn euler_load() {
         let mmb = ColumnBeam::default();
         let lk = 10000.0;
-        assert_zeq!(mmb.euler_load(lk, Axis::Z), 172_718.077_019);
+        assert_zeq!(mmb.euler_load(lk, Axis::Z), 34612.70263462038);
     }
 }

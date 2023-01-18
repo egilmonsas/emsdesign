@@ -1,8 +1,5 @@
-pub mod r#box;
-pub mod circle;
-pub mod rect;
-pub mod standard;
-pub mod tube;
+pub mod chs;
+pub mod heb;
 
 use serde_json::{json, Value};
 
@@ -50,5 +47,63 @@ pub trait CrossSection {
             "w_pl_z": self.w_pl(Axis::Z),
         });
         jsonout
+    }
+}
+
+use crate::crs::chs::*;
+use crate::crs::heb::*;
+use crate::err::EmsError;
+
+#[derive(Clone, Copy)]
+pub enum PRESETS {
+    HEB,
+    CHS,
+}
+
+impl PRESETS {
+    #[must_use]
+    pub fn get(identifier: &str) -> Option<Self> {
+        match identifier {
+            "HEB" => Some(Self::HEB),
+            "CHS" => Some(Self::CHS),
+            _ => None,
+        }
+    }
+}
+
+pub struct CrsLib {}
+
+impl CrsLib {
+    pub fn sections(preset: &PRESETS) -> Vec<&str> {
+        match preset {
+            PRESETS::HEB => HEBLIB.keys().cloned().collect(),
+            PRESETS::CHS => CHSLIB.keys().cloned().collect(),
+        }
+    }
+    pub fn get(preset: &PRESETS, key: &str) -> Box<dyn CrossSection> {
+        match preset {
+            PRESETS::HEB => Box::new(HEBLIB.get(key).cloned().unwrap_or_default()),
+            PRESETS::CHS => Box::new(CHSLIB.get(key).cloned().unwrap_or_default()),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::zequality::Zeq;
+
+    #[test]
+    fn can_collect_vector_from_section_names() {
+        let res = CrsLib::sections(&PRESETS::CHS);
+        dbg!(res);
+    }
+
+    #[test]
+    fn can_get_heb_beam() {
+        let heb100 = CrsLib::get(&PRESETS::HEB, "HEB 100");
+        dbg!(heb100.height());
+        let heb400 = CrsLib::get(&PRESETS::HEB, "HEB 400");
+        dbg!(heb400.height());
     }
 }
