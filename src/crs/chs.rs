@@ -1,6 +1,6 @@
 use super::CrossSection;
 use crate::Axis;
-use phf::phf_map;
+use phf::phf_ordered_map;
 
 #[derive(Debug, Clone)]
 pub struct CrsCHS {
@@ -74,7 +74,7 @@ impl CrossSection for CrsCHS {
     }
 }
 
-pub static CHSLIB: phf::Map<&'static str, CrsCHS> = phf_map! {
+pub static CHSLIB: phf::OrderedMap<&'static str, CrsCHS> = phf_ordered_map! {
 "Celsius 355 CHS 21.3x2.6" => CrsCHS{diameter: 21.3_f64, wall_thickness: 2.6_f64, area: 153.0_f64, area_shear: 153.0_f64, w_elastic: 640.0_f64, w_plastic: 920.0_f64, inertia: 6800.000000000001_f64},
 "Celsius 355 CHS 21.3x2.9" => CrsCHS{diameter: 21.3_f64, wall_thickness: 2.9_f64, area: 168.0_f64, area_shear: 168.0_f64, w_elastic: 680.0_f64, w_plastic: 990.0_f64, inertia: 7300.0_f64},
 "Celsius 355 CHS 21.3x3.2" => CrsCHS{diameter: 21.3_f64, wall_thickness: 3.2_f64, area: 182.0_f64, area_shear: 182.0_f64, w_elastic: 720.0_f64, w_plastic: 1060.0_f64, inertia: 7700.0_f64},

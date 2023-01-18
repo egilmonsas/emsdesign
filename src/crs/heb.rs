@@ -1,6 +1,6 @@
 use super::CrossSection;
 use crate::Axis;
-use phf::phf_map;
+use phf::phf_ordered_map;
 
 #[derive(Debug, Clone)]
 pub struct CrsHEB {
@@ -78,7 +78,7 @@ impl CrossSection for CrsHEB {
         }
     }
 }
-pub static HEBLIB: phf::Map<&'static str, CrsHEB> = phf_map! {
+pub static HEBLIB: phf::OrderedMap<&'static str, CrsHEB> = phf_ordered_map! {
     "HEB 100" => CrsHEB{width: 100.0_f64, height: 100.0_f64, area: 2600.0_f64, area_shear_y: 2000.0_f64, w_elastic_y: 89900.0_f64, w_plastic_y: 104000.0_f64, inertia_y: 4500000.0_f64, area_shear_z: 540.0_f64, w_elastic_z: 33500.0_f64, w_plastic_z: 51000.0_f64, inertia_z: 1670000.0_f64},
 "HEB 120" => CrsHEB{width: 120.0_f64, height: 120.0_f64, area: 3400.0_f64, area_shear_y: 2640.0_f64, w_elastic_y: 144000.0_f64, w_plastic_y: 165000.0_f64, inertia_y: 8640000.0_f64, area_shear_z: 708.0_f64, w_elastic_z: 52900.0_f64, w_plastic_z: 81000.0_f64, inertia_z: 3180000.0_f64},
 "HEB 140" => CrsHEB{width: 140.0_f64, height: 140.0_f64, area: 4300.0_f64, area_shear_y: 3360.0_f64, w_elastic_y: 216000.0_f64, w_plastic_y: 246000.0_f64, inertia_y: 15100000.0_f64, area_shear_z: 896.0000000000001_f64, w_elastic_z: 78500.0_f64, w_plastic_z: 120000.0_f64, inertia_z: 5500000.0_f64},
