@@ -1,4 +1,4 @@
-use super::CrossSection;
+use super::{CrossSection, CrossSectionClass, CrossSectionClassCase};
 use crate::Axis;
 use phf::phf_ordered_map;
 
@@ -70,6 +70,14 @@ impl CrossSection for CrsCHS {
             }
             Axis::Y => self.area_shear,
             Axis::Z => self.area_shear,
+        }
+    }
+    fn cross_section_class(&self, epsilon: f64, _case: CrossSectionClassCase) -> CrossSectionClass {
+        match self.diameter / self.wall_thickness {
+            res if res <= 50.0 * epsilon.powi(2) => CrossSectionClass::One,
+            res if res <= 70.0 * epsilon.powi(2) => CrossSectionClass::Two,
+            res if res <= 90.0 * epsilon.powi(2) => CrossSectionClass::Three,
+            _ => CrossSectionClass::Four,
         }
     }
 }

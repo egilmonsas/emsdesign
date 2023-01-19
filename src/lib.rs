@@ -7,6 +7,7 @@ pub mod err;
 pub mod load;
 pub mod mat;
 pub mod mmb;
+pub mod test;
 pub enum Axis {
     X,
     Y,

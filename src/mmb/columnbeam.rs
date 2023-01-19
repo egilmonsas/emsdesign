@@ -1,4 +1,4 @@
-use crate::crs::CrossSection;
+use crate::crs::{CrossSection, CrossSectionClass, CrossSectionClassCase};
 use crate::erc::NSEN_1993::{BuckleCurve, _compute_lamba, _compute_phi, f_6_47, f_6_49};
 use crate::mat::steel::Steel;
 use crate::{crs::heb::CrsHEB, mat::Material};
@@ -107,6 +107,10 @@ impl ColumnBeam {
 
         });
         jsonout
+    }
+
+    pub fn cross_section_class(&self, case: CrossSectionClassCase) -> CrossSectionClass {
+        self.crs.cross_section_class(self.mat.epsilon(), case)
     }
 }
 

@@ -11,7 +11,7 @@ pub trait Material {
     fn f_u(&self, limit_state_type: &LimitStateType) -> f64;
     fn gamma_m0(&self, limit_state_type: &LimitStateType) -> f64;
     fn gamma_m1(&self, limit_state_type: &LimitStateType) -> f64;
-
+    fn epsilon(&self) -> f64;
     fn json(&self) -> Value {
         let jsonout = json!({
             "E": self.E(),

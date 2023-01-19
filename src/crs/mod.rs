@@ -5,6 +5,32 @@ use serde_json::{json, Value};
 
 use crate::Axis;
 
+#[derive(PartialEq, Debug)]
+pub enum CrossSectionClass {
+    One = 1,
+    Two = 2,
+    Three = 3,
+    Four = 4,
+}
+pub enum CrossSectionClassCase {
+    WebBending,
+    WebCompression,
+    WebBendingAndCompression,
+    FlangeCompression,
+    FlangeBendingAndCompressionAtFreeEnd,
+    FlangeBendingAndTesionAtFreeEnd,
+}
+impl std::fmt::Display for CrossSectionClass {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Self::One => write!(f, "{}", "Cross section class 1"),
+            Self::Two => write!(f, "{}", "Cross section class 2"),
+            Self::Three => write!(f, "{}", "!!!Cross section class 3!!!"),
+            Self::Four => write!(f, "{}", "!!!Cross section class 4!!!"),
+        }
+    }
+}
+
 pub trait CrossSection {
     /// Width of bounding box (along y-axis) in
     /// [mm]
@@ -31,6 +57,8 @@ pub trait CrossSection {
     fn w_el(&self, axis: Axis) -> f64;
     /// Bending moment in [mm^3] about a given axis
     fn w_pl(&self, axis: Axis) -> f64;
+
+    fn cross_section_class(&self, epsilon: f64, case: CrossSectionClassCase) -> CrossSectionClass;
 
     fn json(&self) -> Value {
         let jsonout = json!({

@@ -118,6 +118,9 @@ impl Material for Steel {
             LimitStateType::D => self.gamma_m1,
         }
     }
+    fn epsilon(&self) -> f64 {
+        (235.0 / self.fy).sqrt()
+    }
 }
 
 #[cfg(test)]
@@ -132,9 +135,17 @@ mod tests {
         assert_zeq!(steel.gamma_m0(&LimitStateType::D), 1.05);
     }
     #[test]
-    fn can_create_expected_steel_class() {
-        let steel = Steel::from(&Variant::S355);
-        assert_zeq!(steel.f_y(&LimitStateType::K), 355.0);
-        assert_zeq!(steel.f_u(&LimitStateType::K), 490.0);
+    fn correct_yield_strength() {
+        assert_zeq!(Steel::from(&Variant::S235).f_y(&LimitStateType::K), 235.0);
+        assert_zeq!(Steel::from(&Variant::S275).f_y(&LimitStateType::K), 275.0);
+        assert_zeq!(Steel::from(&Variant::S355).f_y(&LimitStateType::K), 355.0);
+        assert_zeq!(Steel::from(&Variant::S450).f_y(&LimitStateType::K), 440.0);
+    }
+    #[test]
+    fn epsilon_is_computed_correctly() {
+        assert_zeq!(Steel::from(&Variant::S235).epsilon(), 1.0);
+        assert_zeq!(Steel::from(&Variant::S275).epsilon(), 0.924416);
+        assert_zeq!(Steel::from(&Variant::S355).epsilon(), 0.813616);
+        assert_zeq!(Steel::from(&Variant::S450).epsilon(), 0.730815);
     }
 }
