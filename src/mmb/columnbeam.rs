@@ -87,7 +87,7 @@ impl ColumnBeam {
     #[must_use]
     pub fn json(&self) -> Value {
         match self.crs.variant() {
-            crate::crs::Variant::CHS => {
+            crate::crs::Variant::HEB => {
                 json!({
                     "EA": self.EA(),
                     "EI_y": self.EI(Axis::Y),
@@ -111,7 +111,7 @@ impl ColumnBeam {
                     "M_pl_z_d": self.M_pl(Axis::Z,&LimitStateType::D),
                 })
             }
-            crate::crs::Variant::HEB => {
+            crate::crs::Variant::CHS => {
                 json!({
                     "EA": self.EA(),
                     "EI": self.EI(Axis::Y),
