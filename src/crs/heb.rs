@@ -21,14 +21,15 @@ pub struct CrsHEB {
 }
 
 impl CrsHEB {
-    pub fn from_key(key: &str) -> Option<CrsHEB> {
+    #[must_use]
+    pub fn from_key(key: &str) -> Option<Self> {
         HEBLIB.get(key).cloned()
     }
 
     fn cclass_web_bending(&self, epsilon: f64) -> CrossSectionClass {
         // Tverrsnittsdeler som utsettes for bøyning
 
-        let c = self.height() - 2.0 * (self.thickness_flange + self.radius);
+        let c = 2.0f64.mul_add(-self.thickness_flange + self.radius, self.height());
         match c / self.thickness_web {
             res if res <= 72.0 * epsilon => CrossSectionClass::One,
             res if res <= 83.0 * epsilon => CrossSectionClass::Two,
@@ -37,7 +38,7 @@ impl CrsHEB {
         }
     }
     fn cclass_web_compression(&self, epsilon: f64) -> CrossSectionClass {
-        let c = self.height() - 2.0 * (self.thickness_flange + self.radius);
+        let c = 2.0f64.mul_add(-self.thickness_flange + self.radius, self.height());
         match c / self.thickness_web {
             res if res <= 33.0 * epsilon => CrossSectionClass::One,
             res if res <= 38.0 * epsilon => CrossSectionClass::Two,
@@ -58,7 +59,7 @@ impl CrsHEB {
 
 impl Default for CrsHEB {
     fn default() -> Self {
-        Self::from_key("HEB 100").unwrap()
+        Self::from_key("HEB 100").expect("Could not extract section 'HEB 100'")
     }
 }
 impl CrossSection for CrsHEB {
@@ -127,6 +128,7 @@ impl CrossSection for CrsHEB {
         }
     }
 }
+#[allow(clippy::unreadable_literal)]
 pub static HEBLIB: phf::OrderedMap<&'static str, CrsHEB> = phf_ordered_map! {
     "HEB 100" => CrsHEB{width: 100.0_f64, height: 100.0_f64, area: 2600.0_f64, thickness_web: 6.0_f64, thickness_flange: 10.0_f64, radius: 12.0_f64, area_shear_y: 2000.0_f64, w_elastic_y: 89900.0_f64, w_plastic_y: 104000.0_f64, inertia_y: 4500000.0_f64, area_shear_z: 540.0_f64, w_elastic_z: 33500.0_f64, w_plastic_z: 51000.0_f64, inertia_z: 1670000.0_f64},
     "HEB 120" => CrsHEB{width: 120.0_f64, height: 120.0_f64, area: 3400.0_f64, thickness_web: 6.5_f64, thickness_flange: 11.0_f64, radius: 12.0_f64, area_shear_y: 2640.0_f64, w_elastic_y: 144000.0_f64, w_plastic_y: 165000.0_f64, inertia_y: 8640000.0_f64, area_shear_z: 708.0_f64, w_elastic_z: 52900.0_f64, w_plastic_z: 81000.0_f64, inertia_z: 3180000.0_f64},

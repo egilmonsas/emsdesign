@@ -5,7 +5,7 @@ use serde_json::{json, Value};
 
 use crate::Axis;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum CrossSectionClass {
     One = 1,
     Two = 2,
@@ -23,10 +23,10 @@ pub enum CrossSectionClassCase {
 impl std::fmt::Display for CrossSectionClass {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Self::One => write!(f, "{}", "Cross section class 1"),
-            Self::Two => write!(f, "{}", "Cross section class 2"),
-            Self::Three => write!(f, "{}", "!!!Cross section class 3!!!"),
-            Self::Four => write!(f, "{}", "!!!Cross section class 4!!!"),
+            Self::One => write!(f, "Cross section class 1"),
+            Self::Two => write!(f, "Cross section class 2"),
+            Self::Three => write!(f, "!!!Cross section class 3!!!"),
+            Self::Four => write!(f, "!!!Cross section class 4!!!"),
         }
     }
 }
@@ -78,9 +78,8 @@ pub trait CrossSection {
     }
 }
 
-use crate::crs::chs::*;
-use crate::crs::heb::*;
-use crate::err::EmsError;
+use crate::crs::chs::CHSLIB;
+use crate::crs::heb::HEBLIB;
 
 #[derive(Clone, Copy)]
 pub enum PRESETS {
@@ -99,15 +98,17 @@ impl PRESETS {
     }
 }
 
-pub struct CrsLib {}
+pub struct CrossSectionLib {}
 
-impl CrsLib {
+impl CrossSectionLib {
+    #[must_use]
     pub fn sections(preset: &PRESETS) -> Vec<&str> {
         match preset {
-            PRESETS::HEB => HEBLIB.keys().cloned().collect(),
-            PRESETS::CHS => CHSLIB.keys().cloned().collect(),
+            PRESETS::HEB => HEBLIB.keys().copied().collect(),
+            PRESETS::CHS => CHSLIB.keys().copied().collect(),
         }
     }
+    #[must_use]
     pub fn get(preset: &PRESETS, key: &str) -> Box<dyn CrossSection> {
         match preset {
             PRESETS::HEB => Box::new(HEBLIB.get(key).cloned().unwrap_or_default()),
@@ -119,19 +120,18 @@ impl CrsLib {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::zequality::Zeq;
 
     #[test]
     fn can_collect_vector_from_section_names() {
-        let res = CrsLib::sections(&PRESETS::CHS);
+        let res = CrossSectionLib::sections(&PRESETS::CHS);
         dbg!(res);
     }
 
     #[test]
     fn can_get_heb_beam() {
-        let heb100 = CrsLib::get(&PRESETS::HEB, "HEB 100");
+        let heb100 = CrossSectionLib::get(&PRESETS::HEB, "HEB 100");
         dbg!(heb100.height());
-        let heb400 = CrsLib::get(&PRESETS::HEB, "HEB 400");
+        let heb400 = CrossSectionLib::get(&PRESETS::HEB, "HEB 400");
         dbg!(heb400.height());
     }
 }

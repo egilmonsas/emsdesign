@@ -2,15 +2,15 @@
 mod integrationtest {
     use crate::{
         crs::CrossSectionClassCase,
-        crs::{heb::CrsHEB, CrossSectionClass, CrsLib, PRESETS},
+        crs::{heb::CrsHEB, CrossSectionClass, CrossSectionLib, PRESETS},
         mat::steel::{Steel, Variant},
         mmb::columnbeam::ColumnBeam,
     };
     #[test]
     fn dbg_all_heb_crossection_classes_in_web_bending() {
-        let sections = CrsLib::sections(&PRESETS::HEB);
+        let sections = CrossSectionLib::sections(&PRESETS::HEB);
         for section in sections {
-            let crs = CrsHEB::from_key(section).unwrap();
+            let crs = CrsHEB::from_key(section).expect("Could not extract section");
             let mat = Steel::from(&Variant::S355);
             let cmb = ColumnBeam::new(Box::new(crs), mat);
             println!(
@@ -22,9 +22,9 @@ mod integrationtest {
     }
     #[test]
     fn dbg_all_heb_crossection_classes_in_web_compression() {
-        let sections = CrsLib::sections(&PRESETS::HEB);
+        let sections = CrossSectionLib::sections(&PRESETS::HEB);
         for section in sections {
-            let crs = CrsHEB::from_key(section).unwrap();
+            let crs = CrsHEB::from_key(section).expect("Could not extract section");
             let mat = Steel::from(&Variant::S355);
             let cmb = ColumnBeam::new(Box::new(crs), mat);
             println!(
@@ -37,7 +37,7 @@ mod integrationtest {
 
     #[test]
     fn heb1000_s355_web_gives_cross_section_class_1_in_pure_bending() {
-        let crs = CrsHEB::from_key("HEB 1000").unwrap();
+        let crs = CrsHEB::from_key("HEB 1000").expect("Could not extract section 'HEB 1000'");
         let mat = Steel::from(&Variant::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);
         assert_eq!(
@@ -47,7 +47,7 @@ mod integrationtest {
     }
     #[test]
     fn heb1000_s355_web_gives_cross_section_class_4_in_pure_compression() {
-        let crs = CrsHEB::from_key("HEB 1000").unwrap();
+        let crs = CrsHEB::from_key("HEB 1000").expect("Could not extract section 'HEB 1000'");
         let mat = Steel::from(&Variant::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);
         assert_eq!(
@@ -57,7 +57,7 @@ mod integrationtest {
     }
     #[test]
     fn heb800_s355_web_gives_cross_section_class_3_in_pure_compression() {
-        let crs = CrsHEB::from_key("HEB 800").unwrap();
+        let crs = CrsHEB::from_key("HEB 800").expect("Could not extract section 'HEB 800'");
         let mat = Steel::from(&Variant::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);
         assert_eq!(
@@ -67,7 +67,7 @@ mod integrationtest {
     }
     #[test]
     fn heb100_s355_web_gives_cross_section_class_3_in_pure_compression() {
-        let crs = CrsHEB::from_key("HEB 600").unwrap();
+        let crs = CrsHEB::from_key("HEB 600").expect("Could not extract section 'HEB 600'");
         let mat = Steel::from(&Variant::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);
         assert_eq!(

@@ -31,6 +31,7 @@ pub fn f_6_47(khi: f64, area: f64, fy: f64, gamma_1: f64) -> f64 {
 #[must_use]
 pub fn f_6_49(phi: f64, lambda: f64) -> f64 {
     // Calculate khi
+    #![allow(clippy::suboptimal_flops)]
     let khi_reduction_factor = 1.0 / (phi + (phi.powi(2) - lambda.powi(2)).sqrt());
     // Upper bounded by 1.0
     khi_reduction_factor.clamp(0.0, 1.0)
@@ -38,7 +39,8 @@ pub fn f_6_49(phi: f64, lambda: f64) -> f64 {
 
 #[must_use]
 pub fn _compute_phi(alpha: f64, lambda: f64) -> f64 {
-    0.5 * lambda.mul_add(lambda, alpha.mul_add(lambda - 0.2, 1.0))
+    #![allow(clippy::suboptimal_flops)]
+    0.5 * (1.0 + alpha * (lambda - 0.2) + lambda.powi(2))
 }
 
 #[must_use]

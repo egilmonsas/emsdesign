@@ -14,14 +14,16 @@ pub struct CrsCHS {
 }
 
 impl CrsCHS {
-    pub fn from_key(key: &str) -> Option<CrsCHS> {
+    #[must_use]
+    pub fn from_key(key: &str) -> Option<Self> {
         CHSLIB.get(key).cloned()
     }
 }
 
 impl Default for CrsCHS {
     fn default() -> Self {
-        Self::from_key("Celsius 355 CHS 21.3x2.6").unwrap()
+        Self::from_key("Celsius 355 CHS 21.3x2.6")
+            .expect("Could not extract section 'Celsius 355 CHS 21.3x2.6'")
     }
 }
 impl CrossSection for CrsCHS {
@@ -40,8 +42,7 @@ impl CrossSection for CrsCHS {
             Axis::X => {
                 todo!()
             }
-            Axis::Y => self.inertia,
-            Axis::Z => self.inertia,
+            Axis::Y | Axis::Z => self.inertia,
         }
     }
     fn w_el(&self, axis: Axis) -> f64 {
@@ -49,8 +50,7 @@ impl CrossSection for CrsCHS {
             Axis::X => {
                 todo!()
             }
-            Axis::Y => self.w_elastic,
-            Axis::Z => self.w_elastic,
+            Axis::Y | Axis::Z => self.w_elastic,
         }
     }
     fn w_pl(&self, axis: Axis) -> f64 {
@@ -58,8 +58,7 @@ impl CrossSection for CrsCHS {
             Axis::X => {
                 todo!()
             }
-            Axis::Y => self.w_plastic,
-            Axis::Z => self.w_plastic,
+            Axis::Y | Axis::Z => self.w_plastic,
         }
     }
 
@@ -68,8 +67,7 @@ impl CrossSection for CrsCHS {
             Axis::X => {
                 todo!()
             }
-            Axis::Y => self.area_shear,
-            Axis::Z => self.area_shear,
+            Axis::Y | Axis::Z => self.area_shear,
         }
     }
     fn cross_section_class(&self, epsilon: f64, _case: CrossSectionClassCase) -> CrossSectionClass {
@@ -82,6 +80,7 @@ impl CrossSection for CrsCHS {
     }
 }
 
+#[allow(clippy::unreadable_literal)]
 pub static CHSLIB: phf::OrderedMap<&'static str, CrsCHS> = phf_ordered_map! {
 "Celsius 355 CHS 21.3x2.6" => CrsCHS{diameter: 21.3_f64, wall_thickness: 2.6_f64, area: 153.0_f64, area_shear: 153.0_f64, w_elastic: 640.0_f64, w_plastic: 920.0_f64, inertia: 6800.000000000001_f64},
 "Celsius 355 CHS 21.3x2.9" => CrsCHS{diameter: 21.3_f64, wall_thickness: 2.9_f64, area: 168.0_f64, area_shear: 168.0_f64, w_elastic: 680.0_f64, w_plastic: 990.0_f64, inertia: 7300.0_f64},

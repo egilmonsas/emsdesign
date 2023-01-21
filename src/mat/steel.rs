@@ -144,8 +144,8 @@ mod tests {
     #[test]
     fn epsilon_is_computed_correctly() {
         assert_zeq!(Steel::from(&Variant::S235).epsilon(), 1.0);
-        assert_zeq!(Steel::from(&Variant::S275).epsilon(), 0.924416);
-        assert_zeq!(Steel::from(&Variant::S355).epsilon(), 0.813616);
-        assert_zeq!(Steel::from(&Variant::S450).epsilon(), 0.730815);
+        assert_zeq!(Steel::from(&Variant::S275).epsilon(), 0.924_416);
+        assert_zeq!(Steel::from(&Variant::S355).epsilon(), 0.813_616);
+        assert_zeq!(Steel::from(&Variant::S450).epsilon(), 0.730_815);
     }
 }

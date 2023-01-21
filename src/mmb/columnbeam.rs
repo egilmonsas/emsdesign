@@ -10,11 +10,11 @@ pub struct ColumnBeam {
     pub crs: Box<dyn CrossSection>,
     pub mat: Steel,
 }
-
+#[allow(clippy::derivable_impls)]
 impl Default for ColumnBeam {
     fn default() -> Self {
         Self {
-            crs: Box::new(CrsHEB::default()),
+            crs: Box::<CrsHEB>::default(),
             mat: Steel::default(),
         }
     }
@@ -109,6 +109,7 @@ impl ColumnBeam {
         jsonout
     }
 
+    #[must_use]
     pub fn cross_section_class(&self, case: CrossSectionClassCase) -> CrossSectionClass {
         self.crs.cross_section_class(self.mat.epsilon(), case)
     }
@@ -122,37 +123,37 @@ mod tests {
     #[test]
     fn axial_cap() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.N_pl(&LimitStateType::K), 923000.0);
+        assert_zeq!(mmb.N_pl(&LimitStateType::K), 923_000.0);
     }
     #[test]
     fn axial_cap_circle() {
         let mmb = ColumnBeam {
-            crs: Box::new(CrsHEB::default()),
+            crs: Box::<CrsHEB>::default(),
             ..Default::default()
         };
-        assert_zeq!(mmb.N_pl(&LimitStateType::K), 923000.0);
+        assert_zeq!(mmb.N_pl(&LimitStateType::K), 923_000.0);
     }
 
     #[test]
     fn moment_cap() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.M_el(Axis::Y, &LimitStateType::K), 31914500.0);
+        assert_zeq!(mmb.M_el(Axis::Y, &LimitStateType::K), 31_914_500.0);
     }
 
     #[test]
     fn ea() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.EA(), 546000000.0);
+        assert_zeq!(mmb.EA(), 546_000_000.0);
     }
     #[test]
     fn ei() {
         let mmb = ColumnBeam::default();
-        assert_zeq!(mmb.EI(Axis::Y), 945000000000.0);
+        assert_zeq!(mmb.EI(Axis::Y), 945_000_000_000.0);
     }
     #[test]
     fn euler_load() {
         let mmb = ColumnBeam::default();
         let lk = 10000.0;
-        assert_zeq!(mmb.euler_load(lk, Axis::Z), 34612.70263462038);
+        assert_zeq!(mmb.euler_load(lk, Axis::Z), 34_612.702_634_620_38);
     }
 }
