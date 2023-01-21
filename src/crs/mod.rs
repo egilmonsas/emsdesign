@@ -27,8 +27,8 @@ impl std::fmt::Display for CrossSectionClass {
         match self {
             Self::One => write!(f, "Cross section class 1"),
             Self::Two => write!(f, "Cross section class 2"),
-            Self::Three => write!(f, "!!!Cross section class 3!!!"),
-            Self::Four => write!(f, "!!!Cross section class 4!!!"),
+            Self::Three => write!(f, "Cross section class 3!"),
+            Self::Four => write!(f, "Cross section class 4❗"),
         }
     }
 }
