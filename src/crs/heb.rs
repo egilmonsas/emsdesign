@@ -1,6 +1,7 @@
 use super::{CrossSection, CrossSectionClass, CrossSectionClassCase};
 use crate::Axis;
 use phf::phf_ordered_map;
+use serde_json::json;
 
 #[derive(Debug, Clone)]
 pub struct CrsHEB {
@@ -135,6 +136,26 @@ impl CrossSection for CrsHEB {
 
     fn variant(&self) -> super::Variant {
         super::Variant::HEB
+    }
+
+    fn json(&self) -> serde_json::Value {
+        let jsonout = json!({
+            "width": self.width,
+            "height": self.height,
+            "area":  self.area,
+            "thickness_flange": self.thickness_flange,
+            "thickness_web": self.thickness_web,
+            "radius1" :self.radius,
+            "A_v_y": self.area_shear_y,
+            "A_v_z": self.area_shear_z,
+            "w_el_y": self.w_elastic_y,
+            "w_pl_y": self.w_plastic_y,
+            "w_el_z": self.w_elastic_z,
+            "w_pl_z": self.w_plastic_z,
+            "I_y": self.inertia_y,
+            "I_z": self.inertia_z,
+        });
+        jsonout
     }
 }
 #[allow(clippy::unreadable_literal)]

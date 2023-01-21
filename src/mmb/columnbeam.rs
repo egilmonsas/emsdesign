@@ -83,7 +83,21 @@ impl ColumnBeam {
     pub fn euler_load(&self, lk: f64, axis: Axis) -> f64 {
         self.EI(axis) * (std::f64::consts::PI / lk).powi(2)
     }
-
+    #[must_use]
+    pub fn self_weight_kg_per_meter(&self) -> f64 {
+        let area_in_squaremillimeter = self.crs.area();
+        let area_in_squaremeter = area_in_squaremillimeter / 1_000_000.0;
+        // m^2 * kg/m^3 = kg/m
+        area_in_squaremeter * self.mat.rho()
+    }
+    #[allow(non_snake_case)]
+    #[must_use]
+    pub fn self_weight_kN_per_meter(&self) -> f64 {
+        let area_in_squaremillimeter = self.crs.area();
+        let area_in_squaremeter = area_in_squaremillimeter / 1_000_000.0;
+        // kg/m * m/s^2 / 1000 = kN/m
+        area_in_squaremeter * self.mat.rho() * crate::constants::G / 1000.0
+    }
     #[must_use]
     pub fn json(&self) -> Value {
         match self.crs.variant() {
@@ -92,22 +106,24 @@ impl ColumnBeam {
                     "EA": self.EA(),
                     "EI_y": self.EI(Axis::Y),
                     "EI_z": self.EI(Axis::Z),
-                    "Cross_section_class_web_bending": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::WebBending).to_string(),
-                    "Cross_section_class_web_compression": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::WebCompression).to_string(),
-                    "Cross_section_class_flange_compression": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::FlangeCompression).to_string(),
+                    "self_weight_kg_pr_meter": self.self_weight_kg_per_meter(),
+                    "self_weight_kN_pr_meter": self.self_weight_kN_per_meter(),
+                    "Cross_section_class_web_bending": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::WebBending).to_num(),
+                    "Cross_section_class_web_compression": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::WebCompression).to_num(),
+                    "Cross_section_class_flange_compression": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::FlangeCompression).to_num(),
                     "N_pl_k": self.N_pl( &LimitStateType::K),
                     "V_pl_y_k": self.V_pl(Axis::Y, &LimitStateType::K),
-                    "M_el_y_k":  self.M_el(Axis::Y,&LimitStateType::K),
+                    "M_el_y_k": self.M_el(Axis::Y,&LimitStateType::K),
                     "M_pl_y_k": self.M_pl(Axis::Y,&LimitStateType::K),
                     "V_pl_z_k": self.V_pl(Axis::Z, &LimitStateType::K),
-                    "M_el_z_k":  self.M_el(Axis::Z,&LimitStateType::K),
+                    "M_el_z_k": self.M_el(Axis::Z,&LimitStateType::K),
                     "M_pl_z_k": self.M_pl(Axis::Z,&LimitStateType::K),
                     "N_pl_d": self.N_pl(&LimitStateType::D),
                     "V_pl_y_d": self.V_pl(Axis::Y, &LimitStateType::D),
-                    "M_el_y_d":  self.M_el(Axis::Y,&LimitStateType::D),
+                    "M_el_y_d": self.M_el(Axis::Y,&LimitStateType::D),
                     "M_pl_y_d": self.M_pl(Axis::Y,&LimitStateType::D),
                     "V_pl_z_d": self.V_pl(Axis::Z, &LimitStateType::D),
-                    "M_el_z_d":  self.M_el(Axis::Z,&LimitStateType::D),
+                    "M_el_z_d": self.M_el(Axis::Z,&LimitStateType::D),
                     "M_pl_z_d": self.M_pl(Axis::Z,&LimitStateType::D),
                 })
             }
@@ -115,15 +131,17 @@ impl ColumnBeam {
                 json!({
                     "EA": self.EA(),
                     "EI": self.EI(Axis::Y),
-                    "Cross_section_class": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::None).to_string(),
+                    "self_weight_kg_pr_meter": self.self_weight_kg_per_meter(),
+                    "self_weight_kN_pr_meter": self.self_weight_kN_per_meter(),
+                    "Cross_section_class": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::None).to_num(),
                     "N_pl_k": self.N_pl( &LimitStateType::K),
                     "N_pl_d": self.N_pl(&LimitStateType::D),
                     "V_pl_k": self.V_pl(Axis::Y, &LimitStateType::K),
                     "V_pl_d": self.V_pl(Axis::Y, &LimitStateType::D),
-                    "M_el_k":  self.M_el(Axis::Y,&LimitStateType::K),
-                    "M_el_d":  self.M_el(Axis::Y,&LimitStateType::D),
+                    "M_el_k": self.M_el(Axis::Y,&LimitStateType::K),
+                    "M_el_d": self.M_el(Axis::Y,&LimitStateType::D),
                     "M_pl_k": self.M_pl(Axis::Y,&LimitStateType::K),
-                    "M_pl_d":  self.M_el(Axis::Y,&LimitStateType::D),
+                    "M_pl_d": self.M_el(Axis::Y,&LimitStateType::D),
                 })
             }
         }

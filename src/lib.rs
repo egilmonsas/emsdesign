@@ -1,6 +1,7 @@
 #![warn(clippy::pedantic, clippy::nursery, clippy::cargo, clippy::unwrap_used)]
 #[macro_use]
 pub mod zequality;
+pub mod constants;
 pub mod crs;
 pub mod erc;
 pub mod err;

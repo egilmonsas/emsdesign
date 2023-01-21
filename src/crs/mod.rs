@@ -2,7 +2,7 @@ pub mod chs;
 pub mod heb;
 
 use serde::Serialize;
-use serde_json::{json, Value};
+use serde_json::Value;
 
 use crate::Axis;
 
@@ -12,6 +12,18 @@ pub enum CrossSectionClass {
     Two = 2,
     Three = 3,
     Four = 4,
+}
+
+impl CrossSectionClass {
+    #[must_use]
+    pub const fn to_num(&self) -> u8 {
+        match self {
+            Self::One => 1,
+            Self::Two => 2,
+            Self::Three => 3,
+            Self::Four => 4,
+        }
+    }
 }
 pub enum CrossSectionClassCase {
     WebBending,
@@ -63,22 +75,7 @@ pub trait CrossSection {
 
     fn cross_section_class(&self, epsilon: f64, case: CrossSectionClassCase) -> CrossSectionClass;
 
-    fn json(&self) -> Value {
-        let jsonout = json!({
-            "width": self.width(),
-            "height": self.height(),
-            "area":  self.area(),
-            "A_v_y":  self.area_shear(Axis::Y),
-            "A_v_z":  self.area_shear(Axis::Z),
-            "I_y": self.I(Axis::Y),
-            "I_z": self.I(Axis::Z),
-            "w_el_y": self.w_el(Axis::Y),
-            "w_pl_y": self.w_pl(Axis::Y),
-            "w_el_z": self.w_el(Axis::Z),
-            "w_pl_z": self.w_pl(Axis::Z),
-        });
-        jsonout
-    }
+    fn json(&self) -> Value;
 }
 
 use crate::crs::chs::CHSLIB;
