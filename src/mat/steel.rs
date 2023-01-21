@@ -2,13 +2,13 @@ use crate::LimitStateType;
 
 use super::Material;
 
-pub enum Variant {
+pub enum Class {
     S235,
     S275,
     S355,
     S450,
 }
-impl Variant {
+impl Class {
     #[must_use]
     pub fn get(identifier: &str) -> Option<Self> {
         match identifier {
@@ -61,24 +61,24 @@ impl Steel {
     }
 
     #[must_use]
-    pub fn from(class: &Variant) -> Self {
+    pub fn from(class: &Class) -> Self {
         match class {
-            Variant::S235 => Self {
+            Class::S235 => Self {
                 fy: 235.0,
                 fu: 360.0,
                 ..Default::default()
             },
-            Variant::S275 => Self {
+            Class::S275 => Self {
                 fy: 275.0,
                 fu: 430.0,
                 ..Default::default()
             },
-            Variant::S355 => Self {
+            Class::S355 => Self {
                 fy: 355.0,
                 fu: 490.0,
                 ..Default::default()
             },
-            Variant::S450 => Self {
+            Class::S450 => Self {
                 fy: 440.0,
                 fu: 550.0,
                 ..Default::default()
@@ -136,16 +136,16 @@ mod tests {
     }
     #[test]
     fn correct_yield_strength() {
-        assert_zeq!(Steel::from(&Variant::S235).f_y(&LimitStateType::K), 235.0);
-        assert_zeq!(Steel::from(&Variant::S275).f_y(&LimitStateType::K), 275.0);
-        assert_zeq!(Steel::from(&Variant::S355).f_y(&LimitStateType::K), 355.0);
-        assert_zeq!(Steel::from(&Variant::S450).f_y(&LimitStateType::K), 440.0);
+        assert_zeq!(Steel::from(&Class::S235).f_y(&LimitStateType::K), 235.0);
+        assert_zeq!(Steel::from(&Class::S275).f_y(&LimitStateType::K), 275.0);
+        assert_zeq!(Steel::from(&Class::S355).f_y(&LimitStateType::K), 355.0);
+        assert_zeq!(Steel::from(&Class::S450).f_y(&LimitStateType::K), 440.0);
     }
     #[test]
     fn epsilon_is_computed_correctly() {
-        assert_zeq!(Steel::from(&Variant::S235).epsilon(), 1.0);
-        assert_zeq!(Steel::from(&Variant::S275).epsilon(), 0.924_416);
-        assert_zeq!(Steel::from(&Variant::S355).epsilon(), 0.813_616);
-        assert_zeq!(Steel::from(&Variant::S450).epsilon(), 0.730_815);
+        assert_zeq!(Steel::from(&Class::S235).epsilon(), 1.0);
+        assert_zeq!(Steel::from(&Class::S275).epsilon(), 0.924_416);
+        assert_zeq!(Steel::from(&Class::S355).epsilon(), 0.813_616);
+        assert_zeq!(Steel::from(&Class::S450).epsilon(), 0.730_815);
     }
 }

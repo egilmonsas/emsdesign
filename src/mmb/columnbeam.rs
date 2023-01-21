@@ -86,27 +86,47 @@ impl ColumnBeam {
 
     #[must_use]
     pub fn json(&self) -> Value {
-        let jsonout = json!({
-            "EA": self.EA(),
-            "EI_y": self.EI(Axis::Y),
-            "EI_z": self.EI(Axis::Z),
-            "N_pl_k": self.N_pl( &LimitStateType::K),
-            "V_pl_y_k": self.V_pl(Axis::Y, &LimitStateType::K),
-            "M_el_y_k":  self.M_el(Axis::Y,&LimitStateType::K),
-            "M_pl_y_k": self.M_pl(Axis::Y,&LimitStateType::K),
-            "V_pl_z_k": self.V_pl(Axis::Z, &LimitStateType::D),
-            "M_el_z_k":  self.M_el(Axis::Z,&LimitStateType::K),
-            "M_pl_z_k": self.M_pl(Axis::Z,&LimitStateType::K),
-            "N_pl_d": self.N_pl(&LimitStateType::D),
-            "V_pl_y_d": self.V_pl(Axis::Y, &LimitStateType::D),
-            "M_el_y_d":  self.M_el(Axis::Y,&LimitStateType::D),
-            "M_pl_y_d": self.M_pl(Axis::Y,&LimitStateType::D),
-            "V_pl_z_d": self.V_pl(Axis::Z, &LimitStateType::D),
-            "M_el_z_d":  self.M_el(Axis::Z,&LimitStateType::D),
-            "M_pl_z_d": self.M_pl(Axis::Z,&LimitStateType::D),
-
-        });
-        jsonout
+        match self.crs.variant() {
+            crate::crs::Variant::CHS => {
+                json!({
+                    "EA": self.EA(),
+                    "EI_y": self.EI(Axis::Y),
+                    "EI_z": self.EI(Axis::Z),
+                    "Cross_section_class_web_bending": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::WebBending),
+                    "Cross_section_class_web_compression": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::WebCompression),
+                    "Cross_section_class_flange_compression": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::FlangeCompression),
+                    "N_pl_k": self.N_pl( &LimitStateType::K),
+                    "V_pl_y_k": self.V_pl(Axis::Y, &LimitStateType::K),
+                    "M_el_y_k":  self.M_el(Axis::Y,&LimitStateType::K),
+                    "M_pl_y_k": self.M_pl(Axis::Y,&LimitStateType::K),
+                    "V_pl_z_k": self.V_pl(Axis::Z, &LimitStateType::K),
+                    "M_el_z_k":  self.M_el(Axis::Z,&LimitStateType::K),
+                    "M_pl_z_k": self.M_pl(Axis::Z,&LimitStateType::K),
+                    "N_pl_d": self.N_pl(&LimitStateType::D),
+                    "V_pl_y_d": self.V_pl(Axis::Y, &LimitStateType::D),
+                    "M_el_y_d":  self.M_el(Axis::Y,&LimitStateType::D),
+                    "M_pl_y_d": self.M_pl(Axis::Y,&LimitStateType::D),
+                    "V_pl_z_d": self.V_pl(Axis::Z, &LimitStateType::D),
+                    "M_el_z_d":  self.M_el(Axis::Z,&LimitStateType::D),
+                    "M_pl_z_d": self.M_pl(Axis::Z,&LimitStateType::D),
+                })
+            }
+            crate::crs::Variant::HEB => {
+                json!({
+                    "EA": self.EA(),
+                    "EI": self.EI(Axis::Y),
+                    "Cross_section_class": self.crs.cross_section_class(self.mat.epsilon(), CrossSectionClassCase::None),
+                    "N_pl_k": self.N_pl( &LimitStateType::K),
+                    "N_pl_d": self.N_pl(&LimitStateType::D),
+                    "V_pl_k": self.V_pl(Axis::Y, &LimitStateType::K),
+                    "V_pl_d": self.V_pl(Axis::Y, &LimitStateType::D),
+                    "M_el_k":  self.M_el(Axis::Y,&LimitStateType::K),
+                    "M_el_d":  self.M_el(Axis::Y,&LimitStateType::D),
+                    "M_pl_k": self.M_pl(Axis::Y,&LimitStateType::K),
+                    "M_pl_d":  self.M_el(Axis::Y,&LimitStateType::D),
+                })
+            }
+        }
     }
 
     #[must_use]

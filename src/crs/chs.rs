@@ -27,6 +27,9 @@ impl Default for CrsCHS {
     }
 }
 impl CrossSection for CrsCHS {
+    fn variant(&self) -> super::Variant {
+        super::Variant::CHS
+    }
     fn width(&self) -> f64 {
         self.diameter
     }

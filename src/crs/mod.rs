@@ -1,11 +1,12 @@
 pub mod chs;
 pub mod heb;
 
+use serde::Serialize;
 use serde_json::{json, Value};
 
 use crate::Axis;
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Serialize)]
 pub enum CrossSectionClass {
     One = 1,
     Two = 2,
@@ -19,6 +20,7 @@ pub enum CrossSectionClassCase {
     FlangeCompression,
     FlangeBendingAndCompressionAtFreeEnd,
     FlangeBendingAndTesionAtFreeEnd,
+    None,
 }
 impl std::fmt::Display for CrossSectionClass {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -32,6 +34,7 @@ impl std::fmt::Display for CrossSectionClass {
 }
 
 pub trait CrossSection {
+    fn variant(&self) -> Variant;
     /// Width of bounding box (along y-axis) in
     /// [mm]
     fn width(&self) -> f64;
@@ -82,12 +85,12 @@ use crate::crs::chs::CHSLIB;
 use crate::crs::heb::HEBLIB;
 
 #[derive(Clone, Copy)]
-pub enum PRESETS {
+pub enum Variant {
     HEB,
     CHS,
 }
 
-impl PRESETS {
+impl Variant {
     #[must_use]
     pub fn get(identifier: &str) -> Option<Self> {
         match identifier {
@@ -102,17 +105,17 @@ pub struct CrossSectionLib {}
 
 impl CrossSectionLib {
     #[must_use]
-    pub fn sections(preset: &PRESETS) -> Vec<&str> {
+    pub fn sections(preset: &Variant) -> Vec<&str> {
         match preset {
-            PRESETS::HEB => HEBLIB.keys().copied().collect(),
-            PRESETS::CHS => CHSLIB.keys().copied().collect(),
+            Variant::HEB => HEBLIB.keys().copied().collect(),
+            Variant::CHS => CHSLIB.keys().copied().collect(),
         }
     }
     #[must_use]
-    pub fn get(preset: &PRESETS, key: &str) -> Box<dyn CrossSection> {
+    pub fn get(preset: &Variant, key: &str) -> Box<dyn CrossSection> {
         match preset {
-            PRESETS::HEB => Box::new(HEBLIB.get(key).cloned().unwrap_or_default()),
-            PRESETS::CHS => Box::new(CHSLIB.get(key).cloned().unwrap_or_default()),
+            Variant::HEB => Box::new(HEBLIB.get(key).cloned().unwrap_or_default()),
+            Variant::CHS => Box::new(CHSLIB.get(key).cloned().unwrap_or_default()),
         }
     }
 }
@@ -123,15 +126,15 @@ mod tests {
 
     #[test]
     fn can_collect_vector_from_section_names() {
-        let res = CrossSectionLib::sections(&PRESETS::CHS);
+        let res = CrossSectionLib::sections(&Variant::CHS);
         dbg!(res);
     }
 
     #[test]
     fn can_get_heb_beam() {
-        let heb100 = CrossSectionLib::get(&PRESETS::HEB, "HEB 100");
+        let heb100 = CrossSectionLib::get(&Variant::HEB, "HEB 100");
         dbg!(heb100.height());
-        let heb400 = CrossSectionLib::get(&PRESETS::HEB, "HEB 400");
+        let heb400 = CrossSectionLib::get(&Variant::HEB, "HEB 400");
         dbg!(heb400.height());
     }
 }

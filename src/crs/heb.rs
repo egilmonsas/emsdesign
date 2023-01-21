@@ -125,7 +125,14 @@ impl CrossSection for CrsHEB {
             CrossSectionClassCase::FlangeBendingAndTesionAtFreeEnd => {
                 todo!()
             }
+            CrossSectionClassCase::None => {
+                todo!()
+            }
         }
+    }
+
+    fn variant(&self) -> super::Variant {
+        super::Variant::HEB
     }
 }
 #[allow(clippy::unreadable_literal)]
