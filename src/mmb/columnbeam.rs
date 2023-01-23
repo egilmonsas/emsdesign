@@ -93,10 +93,8 @@ impl ColumnBeam {
     #[allow(non_snake_case)]
     #[must_use]
     pub fn self_weight_kN_per_meter(&self) -> f64 {
-        let area_in_squaremillimeter = self.crs.area();
-        let area_in_squaremeter = area_in_squaremillimeter / 1_000_000.0;
         // kg/m * m/s^2 / 1000 = kN/m
-        area_in_squaremeter * self.mat.rho() * crate::constants::G / 1000.0
+        self.self_weight_kg_per_meter() * crate::constants::G / 1000.0
     }
     #[must_use]
     pub fn json(&self) -> Value {
