@@ -6,6 +6,7 @@ pub mod steel;
 pub trait Material {
     #[allow(non_snake_case)]
     fn E(&self) -> f64;
+    fn G(&self) -> f64;
     fn rho(&self) -> f64;
     fn f_y(&self, limit_state_type: &LimitStateType) -> f64;
     fn f_u(&self, limit_state_type: &LimitStateType) -> f64;

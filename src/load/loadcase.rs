@@ -23,23 +23,6 @@ impl LoadCase {
     pub fn new() -> Self {
         Self::default()
     }
-    #[must_use]
-    pub fn axial_kN(mut self, load: f64) -> Self {
-        self.N = load * 1000.0;
-        self
-    }
-    #[must_use]
-    pub fn moment_kNm(mut self, mx: f64, my: f64, mz: f64) -> Self {
-        self.Mx = mx * 1_000_000.0;
-        self.My = my * 1_000_000.0;
-        self.Mz = mz * 1_000_000.0;
-        self
-    }
-
-    #[must_use]
-    pub const fn get_all(&self) -> (f64, f64, f64, f64) {
-        (self.N, self.Mx, self.My, self.Mz)
-    }
 }
 
 impl std::fmt::Display for LoadCase {

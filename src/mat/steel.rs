@@ -35,6 +35,7 @@ pub struct Steel {
     fy: f64,
     fu: f64,
     youngs_modulus: f64,
+    poisson_ratio: f64,
     density: f64,
     gamma_m0: f64,
     gamma_m1: f64,
@@ -46,6 +47,7 @@ impl Steel {
         fy: f64,
         fu: f64,
         youngs_modulus: f64,
+        poisson_ratio: f64,
         density: f64,
         gamma_m0: f64,
         gamma_m1: f64,
@@ -54,6 +56,7 @@ impl Steel {
             fy,
             fu,
             youngs_modulus,
+            poisson_ratio,
             density,
             gamma_m0,
             gamma_m1,
@@ -89,13 +92,16 @@ impl Steel {
 
 impl Default for Steel {
     fn default() -> Self {
-        Self::new(355.0, 490.0, 210_000.0, 7850.0, 1.05, 1.05)
+        Self::new(355.0, 490.0, 210_000.0, 0.3, 7850.0, 1.05, 1.05)
     }
 }
 
 impl Material for Steel {
     fn E(&self) -> f64 {
         self.youngs_modulus
+    }
+    fn G(&self) -> f64 {
+        self.E() / (2.0 * (1.0 + self.poisson_ratio))
     }
     fn rho(&self) -> f64 {
         self.density

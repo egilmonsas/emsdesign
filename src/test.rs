@@ -16,7 +16,7 @@ mod integrationtest {
             println!(
                 "Section: {}, Cross_section_class:{}",
                 section,
-                cmb.cross_section_class(CrossSectionClassCase::WebBending)
+                cmb.cross_section_class(&CrossSectionClassCase::WebBending)
             );
         }
     }
@@ -30,7 +30,7 @@ mod integrationtest {
             println!(
                 "Section: {}, Cross_section_class:{}",
                 section,
-                cmb.cross_section_class(CrossSectionClassCase::WebCompression)
+                cmb.cross_section_class(&CrossSectionClassCase::WebCompression)
             );
         }
     }
@@ -41,7 +41,7 @@ mod integrationtest {
         let mat = Steel::from(&Class::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);
         assert_eq!(
-            cmb.cross_section_class(CrossSectionClassCase::WebBending),
+            cmb.cross_section_class(&CrossSectionClassCase::WebBending),
             CrossSectionClass::One
         );
     }
@@ -51,7 +51,7 @@ mod integrationtest {
         let mat = Steel::from(&Class::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);
         assert_eq!(
-            cmb.cross_section_class(CrossSectionClassCase::WebCompression),
+            cmb.cross_section_class(&CrossSectionClassCase::WebCompression),
             CrossSectionClass::Four
         );
     }
@@ -61,7 +61,7 @@ mod integrationtest {
         let mat = Steel::from(&Class::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);
         assert_eq!(
-            cmb.cross_section_class(CrossSectionClassCase::WebCompression),
+            cmb.cross_section_class(&CrossSectionClassCase::WebCompression),
             CrossSectionClass::Four
         );
     }
@@ -71,7 +71,7 @@ mod integrationtest {
         let mat = Steel::from(&Class::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);
         assert_eq!(
-            cmb.cross_section_class(CrossSectionClassCase::WebCompression),
+            cmb.cross_section_class(&CrossSectionClassCase::WebCompression),
             CrossSectionClass::Three
         );
     }

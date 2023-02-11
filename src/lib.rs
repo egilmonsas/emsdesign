@@ -1,4 +1,6 @@
 #![warn(clippy::pedantic, clippy::nursery, clippy::cargo, clippy::unwrap_used)]
+#![allow(clippy::suboptimal_flops)]
+
 #[macro_use]
 pub mod zequality;
 pub mod constants;
@@ -7,6 +9,7 @@ pub mod erc;
 pub mod err;
 pub mod load;
 pub mod mat;
+pub mod mechanics;
 pub mod mmb;
 pub mod test;
 pub enum Axis {

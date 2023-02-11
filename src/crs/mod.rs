@@ -58,7 +58,7 @@ pub trait CrossSection {
     fn area(&self) -> f64;
     /// Area in
     /// [mm^2]
-    fn area_shear(&self, axis: Axis) -> f64;
+    fn area_shear(&self, axis: &Axis) -> f64;
     /// Yc, Zc, as measured from bottom left corner in
     /// [mm]
     fn centroid(&self) -> (f64, f64) {
@@ -66,14 +66,16 @@ pub trait CrossSection {
     }
     #[allow(non_snake_case)]
     /// Inertia in [mm^4] about a given axis
-    fn I(&self, axis: Axis) -> f64;
+    fn I(&self, axis: &Axis) -> f64;
     #[allow(non_snake_case)]
     /// Inertia in [mm^4] about a given axis
-    fn w_el(&self, axis: Axis) -> f64;
+    fn w_el(&self, axis: &Axis) -> f64;
     /// Bending moment in [mm^3] about a given axis
-    fn w_pl(&self, axis: Axis) -> f64;
+    fn w_pl(&self, axis: &Axis) -> f64;
+    /// Bending moment in [mm^3] about a given axis
+    fn w_eff(&self, axis: &Axis) -> f64;
 
-    fn cross_section_class(&self, epsilon: f64, case: CrossSectionClassCase) -> CrossSectionClass;
+    fn cross_section_class(&self, epsilon: f64, case: &CrossSectionClassCase) -> CrossSectionClass;
 
     fn json(&self) -> Value;
 }
