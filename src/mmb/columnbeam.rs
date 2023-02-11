@@ -3,16 +3,18 @@ use crate::erc::NSEN_1993::{self, BuckleCurve, LTBCurve, Table6_7, TableB_1};
 use crate::load::loadcase::LoadCase;
 use crate::mat::steel::Steel;
 use crate::{crs::heb::CrsHEB, mat::Material};
+use serde::Serialize;
 use serde_json::{json, Value};
 
 use crate::{Axis, LimitStateType};
 
+#[derive(Serialize)]
 pub struct DesignChecks {
-    util_6_2: f64,
-    util_6_46_y: f64,
-    util_6_46_z: f64,
-    util_6_61: f64,
-    util_6_62: f64,
+    pub util_6_2: f64,
+    pub util_6_46_y: f64,
+    pub util_6_46_z: f64,
+    pub util_6_61: f64,
+    pub util_6_62: f64,
 }
 pub struct ColumnBeam {
     pub crs: Box<dyn CrossSection>,
