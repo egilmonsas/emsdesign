@@ -63,7 +63,7 @@ impl CrossSection for CrsCHS {
             Axis::Y | Axis::Z => self.w_plastic,
         }
     }
-    fn w_eff(&self, axis: &Axis) -> f64 {
+    fn w_eff(&self, _axis: &Axis) -> f64 {
         todo!()
     }
     fn area_shear(&self, axis: &Axis) -> f64 {

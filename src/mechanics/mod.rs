@@ -6,20 +6,20 @@ pub struct LineLoad {
     pub direction: Vec2,
 }
 impl LineLoad {
+    #[must_use]
     pub fn new(direction: Vec2, magnitude: f64) -> Self {
         Self {
             direction: direction.normalize(),
             magnitude,
         }
     }
+    #[must_use]
     pub fn compute_field_moment(&self, parent: &Member, length_scalar: f64) -> f64 {
         let q_normal = self.direction.decompose(&parent.vector()).1.magnitude() * self.magnitude;
 
         let length = parent.length();
-        let x = length_scalar * length;
-        let moment_at_x = 0.5 * length_scalar * length.powi(2) * q_normal * (1.0 - length_scalar);
 
-        moment_at_x
+        0.5 * length_scalar * length.powi(2) * q_normal * (1.0 - length_scalar)
     }
 }
 
@@ -30,6 +30,7 @@ pub struct Member {
 }
 
 impl Member {
+    #[must_use]
     pub const fn new(start_point: Vec2, end_point: Vec2) -> Self {
         Self {
             start_point,
@@ -38,16 +39,20 @@ impl Member {
         }
     }
 
+    #[must_use]
     pub fn length(&self) -> f64 {
         self.vector().magnitude()
     }
+    #[must_use]
     pub fn angle(&self) -> f64 {
         let v = self.vector();
         f64::atan2(v.y, v.x)
     }
+    #[must_use]
     pub fn vector(&self) -> Vec2 {
         self.end_point - self.start_point
     }
+    #[must_use]
     pub fn point_along_length(&self, scalar: f64) -> Vec2 {
         let scalar = scalar.clamp(0.0, 1.0);
         self.vector() * scalar
@@ -57,6 +62,7 @@ impl Member {
         self.loads.push(line_load);
         self
     }
+    #[must_use]
     pub fn compute_moment(&self, length_scalar: f64) -> f64 {
         self.loads.iter().fold(0.0, |mom_sum, load| {
             mom_sum + load.compute_field_moment(self, length_scalar)
@@ -82,21 +88,25 @@ impl Vec2 {
     }
     #[must_use]
     pub fn magnitude(&self) -> f64 {
-        (self.x.powi(2) + self.y.powi(2)).sqrt()
+        self.x.hypot(self.y)
     }
+    #[must_use]
     pub fn dot(&self, other: &Self) -> f64 {
         self.x * other.x + self.y * other.y
     }
+    #[must_use]
     pub fn project(&self, vector_to_project_unto: &Self) -> Self {
         let dot = self.dot(vector_to_project_unto);
         let mag = vector_to_project_unto.magnitude();
         *vector_to_project_unto * (dot / mag.powi(2))
     }
+    #[must_use]
     pub fn decompose(self, vector_to_decompose_onto: &Self) -> (Self, Self) {
         let parallell_component = self.project(vector_to_decompose_onto);
         let perpendicular_compontent = self - parallell_component;
         (parallell_component, perpendicular_compontent)
     }
+    #[must_use]
     pub fn normalize(mut self) -> Self {
         self = self / self.magnitude();
         self

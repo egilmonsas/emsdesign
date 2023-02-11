@@ -1,5 +1,10 @@
 #![warn(clippy::pedantic, clippy::nursery, clippy::cargo, clippy::unwrap_used)]
-#![allow(clippy::suboptimal_flops)]
+#![allow(
+    clippy::suboptimal_flops,
+    clippy::similar_names,
+    clippy::too_many_arguments,
+    clippy::borrowed_box
+)]
 
 #[macro_use]
 pub mod zequality;

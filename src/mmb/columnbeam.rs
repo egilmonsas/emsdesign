@@ -1,5 +1,5 @@
 use crate::crs::{CrossSection, CrossSectionClass, CrossSectionClassCase};
-use crate::erc::NSEN_1993::{self, BuckleCurve, LTBCurve, Table6_7, TableB_1};
+use crate::erc::NSEN_1993::{self, BuckleCurve, LTBCurve, Table6_7, TableB1};
 use crate::load::loadcase::LoadCase;
 use crate::mat::steel::Steel;
 use crate::{crs::heb::CrsHEB, mat::Material};
@@ -34,6 +34,7 @@ impl ColumnBeam {
     pub fn new(crs: Box<dyn CrossSection>, mat: Steel) -> Self {
         Self { crs, mat }
     }
+    #[must_use]
     pub fn dc(
         &self,
         design_load: &LoadCase,
@@ -71,6 +72,7 @@ impl ColumnBeam {
             ),
         }
     }
+    #[must_use]
     pub fn dc_6_2(&self, design_load: &LoadCase) -> f64 {
         NSEN_1993::f_6_2(
             design_load.N,
@@ -81,6 +83,7 @@ impl ColumnBeam {
             self.M_pl(&Axis::Z, &LimitStateType::D),
         )
     }
+    #[must_use]
     pub fn dc_6_46(
         &self,
         design_load: &LoadCase,
@@ -88,9 +91,10 @@ impl ColumnBeam {
         axis: &Axis,
         buckle_curve: &BuckleCurve,
     ) -> f64 {
-        let N_b_rd = self.buckle_cap(lk, axis, buckle_curve, &LimitStateType::D);
-        design_load.N / N_b_rd
+        let n_b_rd = self.buckle_cap(lk, axis, buckle_curve, &LimitStateType::D);
+        design_load.N / n_b_rd
     }
+    #[must_use]
     pub fn dc_6_61(
         &self,
         design_load: &LoadCase,
@@ -106,7 +110,7 @@ impl ColumnBeam {
             &self.crs,
             &self.cross_section_class(&CrossSectionClassCase::WebCompression),
         );
-        let tableb_1 = TableB_1::from_crs_class(
+        let tableb_1 = TableB1::from_crs_class(
             self.euler_load(lk, &Axis::Y),
             self.euler_load(lk, &Axis::Z),
             c_my,
@@ -115,31 +119,31 @@ impl ColumnBeam {
             &self.cross_section_class(&CrossSectionClassCase::WebCompression),
             buckle_curve_y,
             design_load.N,
-            lk,
         );
-        let util_N = NSEN_1993::f_6_61_util_N(
+        let util_n = NSEN_1993::f_6_61_util_N(
             design_load.N,
             khi_buckle_reduction_factor,
             self.N_pl(&LimitStateType::K),
             self.mat.gamma_m1(&LimitStateType::D),
         );
-        let util_My = NSEN_1993::f_6_61_util_My(
+        let util_my = NSEN_1993::f_6_61_util_My(
             design_load.My,
             table6_7.delta_My_Ed,
             table6_7.Wy * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_yy,
-            self.khi_LT(lk, ltb_curve, mu_cr),
+            self.khi_lt(lk, ltb_curve, mu_cr),
             self.mat.gamma_m1(&LimitStateType::D),
         );
-        let util_Mz = NSEN_1993::f_6_61_util_Mz(
+        let util_mz = NSEN_1993::f_6_61_util_Mz(
             design_load.Mz,
             table6_7.delta_Mz_Ed,
             table6_7.Wz * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_yz,
             self.mat.gamma_m1(&LimitStateType::D),
         );
-        NSEN_1993::f_6_61(util_N, util_My, util_Mz)
+        NSEN_1993::f_6_61(util_n, util_my, util_mz)
     }
+    #[must_use]
     pub fn dc_6_62(
         &self,
         design_load: &LoadCase,
@@ -155,7 +159,7 @@ impl ColumnBeam {
             &self.crs,
             &self.cross_section_class(&CrossSectionClassCase::WebCompression),
         );
-        let tableb_1 = TableB_1::from_crs_class(
+        let tableb_1 = TableB1::from_crs_class(
             self.euler_load(lk, &Axis::Y),
             self.euler_load(lk, &Axis::Z),
             c_my,
@@ -164,30 +168,29 @@ impl ColumnBeam {
             &self.cross_section_class(&CrossSectionClassCase::WebCompression),
             buckle_curve_z,
             design_load.N,
-            lk,
         );
-        let util_N = NSEN_1993::f_6_62_util_N(
+        let util_n = NSEN_1993::f_6_62_util_N(
             design_load.N,
             khi_buckle_reduction_factor,
             self.N_pl(&LimitStateType::K),
             self.mat.gamma_m1(&LimitStateType::D),
         );
-        let util_My = NSEN_1993::f_6_62_util_My(
+        let util_my = NSEN_1993::f_6_62_util_My(
             design_load.My,
             table6_7.delta_My_Ed,
             table6_7.Wy * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_zy,
-            self.khi_LT(lk, ltb_curve, mu_cr),
+            self.khi_lt(lk, ltb_curve, mu_cr),
             self.mat.gamma_m1(&LimitStateType::D),
         );
-        let util_Mz = NSEN_1993::f_6_62_util_Mz(
+        let util_mz = NSEN_1993::f_6_62_util_Mz(
             design_load.Mz,
             table6_7.delta_Mz_Ed,
             table6_7.Wz * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_zz,
             self.mat.gamma_m1(&LimitStateType::D),
         );
-        NSEN_1993::f_6_62(util_N, util_My, util_Mz)
+        NSEN_1993::f_6_62(util_n, util_my, util_mz)
     }
     #[allow(non_snake_case)]
     #[must_use]
@@ -227,17 +230,17 @@ impl ColumnBeam {
         NSEN_1993::f_6_49(phi, lambda)
     }
     #[must_use]
-    pub fn khi_LT(&self, lk: f64, buckle_curve: &LTBCurve, mu_cr: f64) -> f64 {
-        let lambda_LT = self.lambda_LT(lk, self.M_cr(lk, mu_cr));
-        let phi_LT = NSEN_1993::f_6_56_phi_LT(buckle_curve.alpha(), lambda_LT);
-        NSEN_1993::f_6_56(phi_LT, lambda_LT)
+    pub fn khi_lt(&self, lk: f64, buckle_curve: &LTBCurve, mu_cr: f64) -> f64 {
+        let lambda_lt = self.lambda_lt(self.M_cr(lk, mu_cr));
+        let phi_lt = NSEN_1993::f_6_56_phi_LT(buckle_curve.alpha(), lambda_lt);
+        NSEN_1993::f_6_56(phi_lt, lambda_lt)
     }
     #[must_use]
     pub fn lambda(&self, n_cr: f64) -> f64 {
         NSEN_1993::f_6_49_lambda(self.crs.area(), self.mat.f_y(&LimitStateType::K), n_cr)
     }
     #[must_use]
-    pub fn lambda_LT(&self, lk: f64, m_cr: f64) -> f64 {
+    pub fn lambda_lt(&self, m_cr: f64) -> f64 {
         let crs_class = self.cross_section_class(&CrossSectionClassCase::WebCompression);
         let wy = match crs_class {
             CrossSectionClass::One | CrossSectionClass::Two => self.crs.w_pl(&Axis::Y),
@@ -277,11 +280,13 @@ impl ColumnBeam {
     pub fn euler_load(&self, lk: f64, axis: &Axis) -> f64 {
         self.EI(axis) * (std::f64::consts::PI / lk).powi(2)
     }
+    #[allow(non_snake_case)]
     #[must_use]
     pub fn M_0_cr(&self, length: f64) -> f64 {
         let pi = std::f64::consts::PI;
         (pi / length) * (self.GI(&Axis::X) * self.EI(&Axis::Z)).sqrt()
     }
+    #[allow(non_snake_case)]
     #[must_use]
     pub fn M_cr(&self, length: f64, mu_cr: f64) -> f64 {
         self.M_0_cr(length) * mu_cr
@@ -399,8 +404,9 @@ mod tests {
         let mmb = ColumnBeam::default();
         assert_zeq!(mmb.GI(&Axis::X), 7_503_461_538.461_537);
     }
+    #[allow(non_snake_case)]
     #[test]
-    fn M_0_cr() {
+    fn m_0_cr() {
         let mmb = ColumnBeam::default();
         let length = 10000.0;
         assert_zeq!(mmb.M_0_cr(length), 16_115_678.172_546_148);
@@ -416,10 +422,11 @@ mod tests {
         let mmb = ColumnBeam::default();
         assert_zeq!(mmb.lambda(mmb.euler_load(10_000.0, &Axis::Z)), 5.163_962);
     }
+    #[allow(non_snake_case)]
     #[test]
-    fn lambda_LT() {
+    fn lambda_lT() {
         let mmb = ColumnBeam::default();
         let mcr = 1.35 * mmb.M_0_cr(10_000.0);
-        assert_zeq!(mmb.lambda_LT(10_000.0, mcr), 1.302_685);
+        assert_zeq!(mmb.lambda_lt(mcr), 1.302_685);
     }
 }

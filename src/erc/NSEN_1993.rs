@@ -142,18 +142,25 @@ impl Table6_7 {
                 delta_My_Ed: 0.0,
                 delta_Mz_Ed: 0.0,
             },
-            CrossSectionClass::Four => todo!(),
+            // FIX IN THE FUTURE
+            CrossSectionClass::Four => Self {
+                Ai: 0.1,
+                Wy: 0.1,
+                Wz: 0.1,
+                delta_My_Ed: 100.0,
+                delta_Mz_Ed: 100.0,
+            },
         }
     }
 }
-pub struct TableB_1 {
+pub struct TableB1 {
     pub k_yy: f64,
     pub k_yz: f64,
     pub k_zy: f64,
     pub k_zz: f64,
 }
 #[allow(clippy::suboptimal_flops, clippy::similar_names)]
-impl TableB_1 {
+impl TableB1 {
     #[must_use]
     pub fn from_crs_class(
         n_cr_y: f64,
@@ -164,7 +171,6 @@ impl TableB_1 {
         crs_class: &CrossSectionClass,
         buckle_curve: &BuckleCurve,
         N_ed: f64,
-        lk: f64,
     ) -> Self {
         let variant = mmb.crs.variant();
         let lambda_y = mmb.lambda(n_cr_y);
