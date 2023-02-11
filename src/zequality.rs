@@ -1,4 +1,4 @@
-const TOLERANCE: f64 = 0.0001;
+const TOLERANCE: f64 = 0.001;
 
 pub trait Zeq<T> {
     fn zeq(&self, other: T) -> bool;

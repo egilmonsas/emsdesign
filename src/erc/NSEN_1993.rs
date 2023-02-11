@@ -57,14 +57,12 @@ pub fn f_6_49_lambda(area: f64, fy: f64, n_cr: f64) -> f64 {
 #[must_use]
 pub fn f_6_56(phi_LT: f64, lambda_LT: f64) -> f64 {
     // Calculate khi
-    #![allow(clippy::suboptimal_flops)]
     let khi_reduction_factor = 1.0 / (phi_LT + (phi_LT.powi(2) - lambda_LT.powi(2)).sqrt());
     // Upper bounded by 1.0
     khi_reduction_factor.clamp(0.0, 1.0)
 }
 #[must_use]
 pub fn f_6_56_phi_LT(alpha_LT: f64, lambda_LT: f64) -> f64 {
-    #![allow(clippy::suboptimal_flops)]
     0.5 * (1.0 + alpha_LT * (lambda_LT - 0.2) + lambda_LT.powi(2))
 }
 
@@ -169,8 +167,8 @@ impl TableB_1 {
         lk: f64,
     ) -> Self {
         let variant = mmb.crs.variant();
-        let lambda_y = mmb.lambda(lk, &Axis::Y, n_cr_y);
-        let lambda_z = mmb.lambda(lk, &Axis::Z, n_cr_z);
+        let lambda_y = mmb.lambda(n_cr_y);
+        let lambda_z = mmb.lambda(n_cr_z);
         let phi_y = f_6_49_phi(buckle_curve.alpha(), lambda_y);
         let phi_z = f_6_49_phi(buckle_curve.alpha(), lambda_z);
         let ksi_y = f_6_49(phi_y, lambda_y);

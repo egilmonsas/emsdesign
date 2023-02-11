@@ -222,7 +222,7 @@ impl ColumnBeam {
 
     #[must_use]
     pub fn khi(&self, lk: f64, axis: &Axis, buckle_curve: &BuckleCurve) -> f64 {
-        let lambda = self.lambda(lk, axis, self.euler_load(lk, axis));
+        let lambda = self.lambda(self.euler_load(lk, axis));
         let phi = NSEN_1993::f_6_49_phi(buckle_curve.alpha(), lambda);
         NSEN_1993::f_6_49(phi, lambda)
     }
@@ -233,7 +233,7 @@ impl ColumnBeam {
         NSEN_1993::f_6_56(phi_LT, lambda_LT)
     }
     #[must_use]
-    pub fn lambda(&self, lk: f64, axis: &Axis, n_cr: f64) -> f64 {
+    pub fn lambda(&self, n_cr: f64) -> f64 {
         NSEN_1993::f_6_49_lambda(self.crs.area(), self.mat.f_y(&LimitStateType::K), n_cr)
     }
     #[must_use]
@@ -267,7 +267,12 @@ impl ColumnBeam {
         let I = self.crs.I(axis);
         I * self.mat.E()
     }
-
+    #[allow(non_snake_case)]
+    #[must_use]
+    pub fn GI(&self, axis: &Axis) -> f64 {
+        let I = self.crs.I(axis);
+        I * self.mat.G()
+    }
     #[must_use]
     pub fn euler_load(&self, lk: f64, axis: &Axis) -> f64 {
         self.EI(axis) * (std::f64::consts::PI / lk).powi(2)
@@ -275,7 +280,7 @@ impl ColumnBeam {
     #[must_use]
     pub fn M_0_cr(&self, length: f64) -> f64 {
         let pi = std::f64::consts::PI;
-        (pi / length) * (self.mat.G() * self.crs.I(&Axis::X) * self.EI(&Axis::Z))
+        (pi / length) * (self.GI(&Axis::X) * self.EI(&Axis::Z)).sqrt()
     }
     #[must_use]
     pub fn M_cr(&self, length: f64, mu_cr: f64) -> f64 {
@@ -380,14 +385,41 @@ mod tests {
         assert_zeq!(mmb.EA(), 546_000_000.0);
     }
     #[test]
-    fn ei() {
+    fn ei_y() {
         let mmb = ColumnBeam::default();
         assert_zeq!(mmb.EI(&Axis::Y), 945_000_000_000.0);
     }
     #[test]
+    fn ei_z() {
+        let mmb = ColumnBeam::default();
+        assert_zeq!(mmb.EI(&Axis::Z), 350_700_000_000.0);
+    }
+    #[test]
+    fn gi() {
+        let mmb = ColumnBeam::default();
+        assert_zeq!(mmb.GI(&Axis::X), 7_503_461_538.461_537);
+    }
+    #[test]
+    fn M_0_cr() {
+        let mmb = ColumnBeam::default();
+        let length = 10000.0;
+        assert_zeq!(mmb.M_0_cr(length), 16_115_678.172_546_148);
+    }
+    #[test]
     fn euler_load() {
         let mmb = ColumnBeam::default();
-        let lk = 10000.0;
+        let lk = 10_000.0;
         assert_zeq!(mmb.euler_load(lk, &Axis::Z), 34_612.702_634_620_38);
+    }
+    #[test]
+    fn lambda() {
+        let mmb = ColumnBeam::default();
+        assert_zeq!(mmb.lambda(mmb.euler_load(10_000.0, &Axis::Z)), 5.163_962);
+    }
+    #[test]
+    fn lambda_LT() {
+        let mmb = ColumnBeam::default();
+        let mcr = 1.35 * mmb.M_0_cr(10_000.0);
+        assert_zeq!(mmb.lambda_LT(10_000.0, mcr), 1.302_685);
     }
 }
