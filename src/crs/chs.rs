@@ -64,7 +64,8 @@ impl CrossSection for CrsCHS {
         }
     }
     fn w_eff(&self, _axis: &Axis) -> f64 {
-        todo!()
+        // Todo! fix this
+        0.1
     }
     fn area_shear(&self, axis: &Axis) -> f64 {
         match axis {
