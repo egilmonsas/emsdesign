@@ -57,6 +57,8 @@ impl ColumnBeam {
                 c_my,
                 c_mz,
                 mu_cr,
+                lk_y,
+                lk_z,
                 lk_ltb,
                 buckle_curve_y,
                 ltb_curve,
@@ -66,6 +68,8 @@ impl ColumnBeam {
                 c_my,
                 c_mz,
                 mu_cr,
+                lk_y,
+                lk_z,
                 lk_ltb,
                 buckle_curve_z,
                 ltb_curve,
@@ -101,18 +105,20 @@ impl ColumnBeam {
         c_my: f64,
         c_mz: f64,
         mu_cr: f64,
-        lk: f64,
+        l_ky: f64,
+        l_kz: f64,
+        l_kltb: f64,
         buckle_curve_y: &BuckleCurve,
         ltb_curve: &LTBCurve,
     ) -> f64 {
-        let khi_buckle_reduction_factor = self.khi(lk, &Axis::Y, buckle_curve_y);
+        let khi_buckle_reduction_factor = self.khi(l_ky, &Axis::Y, buckle_curve_y);
         let table6_7 = Table6_7::from_crs_class(
             &self.crs,
             &self.cross_section_class(&CrossSectionClassCase::WebCompression),
         );
         let tableb_1 = TableB1::from_crs_class(
-            self.euler_load(lk, &Axis::Y),
-            self.euler_load(lk, &Axis::Z),
+            self.euler_load(l_ky, &Axis::Y),
+            self.euler_load(l_kz, &Axis::Z),
             c_my,
             c_mz,
             self,
@@ -131,7 +137,7 @@ impl ColumnBeam {
             table6_7.delta_My_Ed,
             table6_7.Wy * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_yy,
-            self.khi_lt(lk, ltb_curve, mu_cr),
+            self.khi_lt(l_kltb, ltb_curve, mu_cr),
             self.mat.gamma_m1(&LimitStateType::D),
         );
         let util_mz = NSEN_1993::f_6_61_util_Mz(
@@ -150,18 +156,20 @@ impl ColumnBeam {
         c_my: f64,
         c_mz: f64,
         mu_cr: f64,
-        lk: f64,
+        l_ky: f64,
+        l_kz: f64,
+        l_kltb: f64,
         buckle_curve_z: &BuckleCurve,
         ltb_curve: &LTBCurve,
     ) -> f64 {
-        let khi_buckle_reduction_factor = self.khi(lk, &Axis::Z, buckle_curve_z);
+        let khi_buckle_reduction_factor = self.khi(l_kz, &Axis::Z, buckle_curve_z);
         let table6_7 = Table6_7::from_crs_class(
             &self.crs,
             &self.cross_section_class(&CrossSectionClassCase::WebCompression),
         );
         let tableb_1 = TableB1::from_crs_class(
-            self.euler_load(lk, &Axis::Y),
-            self.euler_load(lk, &Axis::Z),
+            self.euler_load(l_ky, &Axis::Y),
+            self.euler_load(l_kz, &Axis::Z),
             c_my,
             c_mz,
             self,
@@ -180,7 +188,7 @@ impl ColumnBeam {
             table6_7.delta_My_Ed,
             table6_7.Wy * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_zy,
-            self.khi_lt(lk, ltb_curve, mu_cr),
+            self.khi_lt(l_kltb, ltb_curve, mu_cr),
             self.mat.gamma_m1(&LimitStateType::D),
         );
         let util_mz = NSEN_1993::f_6_62_util_Mz(
