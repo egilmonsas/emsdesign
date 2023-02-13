@@ -153,7 +153,7 @@ mod tests {
     fn can_create_member() {
         let member = Member::new(Vec2::new(0.0, 0.0), Vec2::new(1.0, 0.0));
         assert_eq!(member.start_point, Vec2::new(0.0, 0.0));
-        assert_eq!(member.end_point, Vec2::new(0.0, 1.0));
+        assert_eq!(member.end_point, Vec2::new(1.0, 0.0));
     }
     #[test]
     fn member_computes_length_of_unit_member_correctly() {
