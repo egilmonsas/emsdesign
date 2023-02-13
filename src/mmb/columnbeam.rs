@@ -47,6 +47,7 @@ impl ColumnBeam {
         buckle_curve_y: &BuckleCurve,
         buckle_curve_z: &BuckleCurve,
         ltb_curve: &LTBCurve,
+        limit_state_type: &LimitStateType,
     ) -> DesignChecks {
         DesignChecks {
             util_6_2: self.dc_6_2(design_load),
@@ -62,6 +63,7 @@ impl ColumnBeam {
                 lk_ltb,
                 buckle_curve_y,
                 ltb_curve,
+                limit_state_type,
             ),
             util_6_62: self.dc_6_62(
                 design_load,
@@ -73,6 +75,7 @@ impl ColumnBeam {
                 lk_ltb,
                 buckle_curve_z,
                 ltb_curve,
+                limit_state_type,
             ),
         }
     }
@@ -110,6 +113,7 @@ impl ColumnBeam {
         l_kltb: f64,
         buckle_curve_y: &BuckleCurve,
         ltb_curve: &LTBCurve,
+        limit_state_type: &LimitStateType,
     ) -> f64 {
         let khi_buckle_reduction_factor = self.khi(l_ky, &Axis::Y, buckle_curve_y);
         let table6_7 = Table6_7::from_crs_class(
@@ -130,7 +134,7 @@ impl ColumnBeam {
             design_load.N,
             khi_buckle_reduction_factor,
             self.N_pl(&LimitStateType::K),
-            self.mat.gamma_m1(&LimitStateType::D),
+            self.mat.gamma_m1(limit_state_type),
         );
         let util_my = NSEN_1993::f_6_61_util_My(
             design_load.My,
@@ -138,14 +142,14 @@ impl ColumnBeam {
             table6_7.Wy * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_yy,
             self.khi_lt(l_kltb, ltb_curve, mu_cr),
-            self.mat.gamma_m1(&LimitStateType::D),
+            self.mat.gamma_m1(limit_state_type),
         );
         let util_mz = NSEN_1993::f_6_61_util_Mz(
             design_load.Mz,
             table6_7.delta_Mz_Ed,
             table6_7.Wz * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_yz,
-            self.mat.gamma_m1(&LimitStateType::D),
+            self.mat.gamma_m1(limit_state_type),
         );
         NSEN_1993::f_6_61(util_n, util_my, util_mz)
     }
@@ -161,6 +165,7 @@ impl ColumnBeam {
         l_kltb: f64,
         buckle_curve_z: &BuckleCurve,
         ltb_curve: &LTBCurve,
+        limit_state_type: &LimitStateType,
     ) -> f64 {
         let khi_buckle_reduction_factor = self.khi(l_kz, &Axis::Z, buckle_curve_z);
         let table6_7 = Table6_7::from_crs_class(
@@ -181,7 +186,7 @@ impl ColumnBeam {
             design_load.N,
             khi_buckle_reduction_factor,
             self.N_pl(&LimitStateType::K),
-            self.mat.gamma_m1(&LimitStateType::D),
+            self.mat.gamma_m1(limit_state_type),
         );
         let util_my = NSEN_1993::f_6_62_util_My(
             design_load.My,
@@ -189,14 +194,14 @@ impl ColumnBeam {
             table6_7.Wy * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_zy,
             self.khi_lt(l_kltb, ltb_curve, mu_cr),
-            self.mat.gamma_m1(&LimitStateType::D),
+            self.mat.gamma_m1(limit_state_type),
         );
         let util_mz = NSEN_1993::f_6_62_util_Mz(
             design_load.Mz,
             table6_7.delta_Mz_Ed,
             table6_7.Wz * self.mat.f_y(&LimitStateType::K),
             tableb_1.k_zz,
-            self.mat.gamma_m1(&LimitStateType::D),
+            self.mat.gamma_m1(limit_state_type),
         );
         NSEN_1993::f_6_62(util_n, util_my, util_mz)
     }
