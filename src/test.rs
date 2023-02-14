@@ -56,7 +56,7 @@ mod integrationtest {
         );
     }
     #[test]
-    fn heb800_s355_web_gives_cross_section_class_3_in_pure_compression() {
+    fn heb800_s355_web_gives_cross_section_class_4_in_pure_compression() {
         let crs = CrsHEB::from_key("HEB 800").expect("Could not extract section 'HEB 800'");
         let mat = Steel::from(&Class::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);

@@ -95,6 +95,7 @@ impl CrossSection for CrsCHS {
             "area":  self.area,
             "A_v":  self.area_shear,
             "I": self.inertia,
+            "I_t": self.inertia_x,
             "w_el": self.w_elastic,
             "w_pl": self.w_plastic,
         });
