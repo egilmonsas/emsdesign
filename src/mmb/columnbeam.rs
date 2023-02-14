@@ -1,5 +1,7 @@
 use crate::crs::{CrossSection, CrossSectionClass, CrossSectionClassCase};
-use crate::erc::NSEN_1993::{self, BuckleCurve, LTBCurve, Table6_7, TableB1};
+use crate::erc::NSEN_1993::{
+    self, compression_force_positive, BuckleCurve, LTBCurve, Table6_7, TableB1,
+};
 use crate::load::loadcase::LoadCase;
 use crate::mat::steel::Steel;
 use crate::{crs::heb::CrsHEB, mat::Material};
@@ -99,7 +101,7 @@ impl ColumnBeam {
         buckle_curve: &BuckleCurve,
     ) -> f64 {
         let n_b_rd = self.buckle_cap(lk, axis, buckle_curve, &LimitStateType::D);
-        design_load.N / n_b_rd
+        compression_force_positive(design_load.N) / n_b_rd
     }
     #[must_use]
     pub fn dc_6_61(
