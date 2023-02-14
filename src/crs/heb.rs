@@ -30,8 +30,7 @@ impl CrsHEB {
 
     fn cclass_web_bending(&self, epsilon: f64) -> CrossSectionClass {
         // Tverrsnittsdeler som utsettes for bøyning
-        #[allow(clippy::suboptimal_flops)]
-        let c = self.height() - 2.0 * (self.thickness_flange - self.radius);
+        let c = self.height() - 2.0 * (self.thickness_flange + self.radius);
         match c / self.thickness_web {
             res if res <= 72.0 * epsilon => CrossSectionClass::One,
             res if res <= 83.0 * epsilon => CrossSectionClass::Two,
@@ -41,8 +40,7 @@ impl CrsHEB {
     }
     fn cclass_web_compression(&self, epsilon: f64) -> CrossSectionClass {
         // Tverrsnittsdeler som utsettes for rent trykk
-        #[allow(clippy::suboptimal_flops)]
-        let c = self.height() - 2.0 * (self.thickness_flange - self.radius);
+        let c = self.height() - 2.0 * (self.thickness_flange + self.radius);
         match c / self.thickness_web {
             res if res <= 33.0 * epsilon => CrossSectionClass::One,
             res if res <= 38.0 * epsilon => CrossSectionClass::Two,

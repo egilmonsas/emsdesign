@@ -66,13 +66,13 @@ mod integrationtest {
         );
     }
     #[test]
-    fn heb450_s355_web_gives_cross_section_class_3_in_pure_compression() {
-        let crs = CrsHEB::from_key("HEB 450").expect("Could not extract section 'HEB 600'");
+    fn heb550_s355_web_gives_cross_section_class_2_in_pure_compression() {
+        let crs = CrsHEB::from_key("HEB 550").expect("Could not extract section 'HEB 550'");
         let mat = Steel::from(&Class::S355);
         let cmb = ColumnBeam::new(Box::new(crs), mat);
         assert_eq!(
             cmb.cross_section_class(&CrossSectionClassCase::WebCompression),
-            CrossSectionClass::Three
+            CrossSectionClass::Two
         );
     }
 }
