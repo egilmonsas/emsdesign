@@ -10,7 +10,7 @@ use crate::{
 /// Design check 6.2 for columnbeam
 #[must_use]
 pub fn f_6_2(N_ed: f64, My_ed: f64, Mz_ed: f64, N_rd: f64, My_rd: f64, Mz_rd: f64) -> f64 {
-    N_ed / N_rd + My_ed / My_rd + Mz_ed / Mz_rd
+    N_ed.abs() / N_rd + My_ed.abs() / My_rd + Mz_ed.abs() / Mz_rd
 }
 
 /// Reduced capacity to account for shear forces
@@ -76,7 +76,7 @@ pub fn f_6_61(util_N: f64, util_My: f64, util_Mz: f64) -> f64 {
 }
 #[must_use]
 pub fn f_6_61_util_N(N_ed: f64, ksi_y: f64, N_rk: f64, gamma_1: f64) -> f64 {
-    N_ed / (ksi_y * N_rk / gamma_1)
+    N_ed.clamp(N_ed, 0.0) / (ksi_y * N_rk / gamma_1)
 }
 #[must_use]
 pub fn f_6_61_util_My(
@@ -87,11 +87,11 @@ pub fn f_6_61_util_My(
     khi_LT: f64,
     gamma_1: f64,
 ) -> f64 {
-    k_yy * ((My_ed + delta_My_ed) / (khi_LT * (My_rk / gamma_1)))
+    k_yy * ((My_ed.abs() + delta_My_ed) / (khi_LT * (My_rk / gamma_1)))
 }
 #[must_use]
 pub fn f_6_61_util_Mz(Mz_ed: f64, delta_Mz_ed: f64, Mz_rk: f64, k_yz: f64, gamma_1: f64) -> f64 {
-    k_yz * ((Mz_ed + delta_Mz_ed) / (Mz_rk / gamma_1))
+    k_yz * ((Mz_ed.abs() + delta_Mz_ed) / (Mz_rk / gamma_1))
 }
 #[must_use]
 pub fn f_6_62(util_N: f64, util_My: f64, util_Mz: f64) -> f64 {
@@ -99,7 +99,7 @@ pub fn f_6_62(util_N: f64, util_My: f64, util_Mz: f64) -> f64 {
 }
 #[must_use]
 pub fn f_6_62_util_N(N_ed: f64, ksi_z: f64, N_rk: f64, gamma_1: f64) -> f64 {
-    N_ed / (ksi_z * N_rk / gamma_1)
+    N_ed.clamp(N_ed, 0.0) / (ksi_z * N_rk / gamma_1)
 }
 #[must_use]
 pub fn f_6_62_util_My(
@@ -110,11 +110,11 @@ pub fn f_6_62_util_My(
     khi_LT: f64,
     gamma_1: f64,
 ) -> f64 {
-    k_zy * ((My_ed + delta_My_ed) / (khi_LT * (My_rk / gamma_1)))
+    k_zy * ((My_ed.abs() + delta_My_ed) / (khi_LT * (My_rk / gamma_1)))
 }
 #[must_use]
 pub fn f_6_62_util_Mz(Mz_ed: f64, delta_Mz_ed: f64, Mz_rk: f64, k_zz: f64, gamma_1: f64) -> f64 {
-    k_zz * ((Mz_ed + delta_Mz_ed) / (Mz_rk / gamma_1))
+    k_zz * ((Mz_ed.abs() + delta_Mz_ed) / (Mz_rk / gamma_1))
 }
 pub struct Table6_7 {
     pub Ai: f64,
@@ -181,8 +181,8 @@ impl TableB1 {
         let ksi_z = f_6_49(phi_z, lambda_z);
         let N_rk = mmb.N_pl(&crate::LimitStateType::K);
         let gamma_1 = mmb.mat.gamma_m1(&crate::LimitStateType::D);
-        let util_y = N_ed / (ksi_y * N_rk / gamma_1);
-        let util_z = N_ed / (ksi_z * N_rk / gamma_1);
+        let util_y = -N_ed.clamp(N_ed, 0.0) / (ksi_y * N_rk / gamma_1);
+        let util_z = -N_ed.clamp(N_ed, 0.0) / (ksi_z * N_rk / gamma_1);
         match crs_class {
             CrossSectionClass::Three | CrossSectionClass::Four => {
                 let k_yy = (c_my * (1.0 + 0.6 * lambda_y * util_y))
