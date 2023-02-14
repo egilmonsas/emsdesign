@@ -156,7 +156,7 @@ impl CrossSection for CrsHEB {
             "I_y": self.inertia_y,
             "I_z": self.inertia_z,
             "I_t": self.inertia_x,
-            "I_w": self.inertia_z,
+            "I_w": self.inertia_w,
 
         });
         jsonout
